@@ -6,7 +6,7 @@ import '../game/game_controller.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
 import 'board_view.dart';
-import 'cat_art.dart';
+import 'bunny_art.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({
@@ -30,6 +30,8 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
   late final GameController controller;
   late final Listenable _animation;
   bool _dialogShown = false;
+  bool _failDialogShown = false;
+  bool _noLivesDialogOpen = false;
   bool _resetDialogOpen = false;
 
   @override
@@ -56,6 +58,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     _animation = Listenable.merge([controller, widget.app]);
     controller.addListener(_onControllerChanged);
     WidgetsBinding.instance.addObserver(this);
+    _onControllerChanged();
   }
 
   @override
@@ -83,6 +86,60 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
         if (mounted) _showWinDialog();
       });
     }
+    if (controller.failed) {
+      if (!_failDialogShown) {
+        _failDialogShown = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _showNoLivesDialog();
+        });
+      }
+    } else {
+      _failDialogShown = false;
+    }
+  }
+
+  Future<void> _showNoLivesDialog() async {
+    if (_noLivesDialogOpen) return;
+    _noLivesDialogOpen = true;
+    final strings = widget.app.strings;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        icon: Icon(
+          Icons.favorite_border_rounded,
+          size: 44,
+          color: Theme.of(dialogContext).colorScheme.error,
+        ),
+        title: Text(strings.noLivesTitle, textAlign: TextAlign.center),
+        content: Text(strings.noLivesBody, textAlign: TextAlign.center),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          TextButton(
+            onPressed: () => _goHome(dialogContext),
+            child: Text(strings.home),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              controller.reset();
+            },
+            child: Text(strings.restart),
+          ),
+        ],
+      ),
+    );
+    _noLivesDialogOpen = false;
+  }
+
+  void _handleDoubleTap(int cell) {
+    final result = controller.handleDoubleTap(cell);
+    if (!mounted || result != DoubleTapResult.wrong) return;
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(widget.app.strings.wrongBunny(controller.lives))),
+      );
   }
 
   Future<void> _showWinDialog() async {
@@ -93,7 +150,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       builder: (dialogContext) {
         final theme = Theme.of(dialogContext);
         return AlertDialog(
-          icon: const CatLogo(size: 58),
+          icon: const BunnyLogo(size: 58),
           title: Text(strings.winTitle, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -110,8 +167,8 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                     theme: theme,
                   ),
                   _Result(
-                    icon: Icons.pets,
-                    label: strings.cats,
+                    icon: Icons.cruelty_free,
+                    label: strings.bunnies,
                     value:
                         '${controller.puzzle.size}/${controller.puzzle.size}',
                     theme: theme,
@@ -277,9 +334,9 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                         marks: controller.marks,
                         blocked: controller.blockedCells,
                         conflicts: controller.conflictCells,
-                        enabled: !controller.finished && !controller.paused,
+                        enabled: controller.canPlay && !controller.paused,
                         onTap: controller.handleTap,
-                        onDoubleTap: controller.handleDoubleTap,
+                        onDoubleTap: _handleDoubleTap,
                         onDragMark: controller.handleDrag,
                         onDragEnd: () {},
                       ),
@@ -404,7 +461,7 @@ class _Controls extends StatelessWidget {
           child: _ToolButton(
             icon: Icons.lightbulb_outline_rounded,
             label: strings.hint,
-            onPressed: controller.finished ? null : onHint,
+            onPressed: controller.canPlay ? onHint : null,
           ),
         ),
         const SizedBox(width: 10),
@@ -433,8 +490,31 @@ class _Controls extends StatelessWidget {
           ),
           label: Text(strings.autoCrossShort),
         ),
+        Tooltip(
+          message: strings.lives,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var index = 0; index < startingLives; index++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
+                  child: Icon(
+                    index < controller.lives
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    size: 16,
+                    color: index < controller.lives
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.45,
+                          ),
+                  ),
+                ),
+            ],
+          ),
+        ),
         Text(
-          '${strings.cats}: ${controller.catCount}/$total',
+          '${strings.bunnies}: ${controller.bunnyCount}/$total',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),

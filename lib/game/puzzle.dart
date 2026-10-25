@@ -4,8 +4,8 @@ enum Difficulty { easy, medium, hard, expert }
 
 const List<int> supportedSizes = [6, 7, 8, 9];
 
-/// Un puzle de gatos: cuadrícula n×n dividida en n regiones conexas.
-/// La solución coloca un gato por fila, columna y región, sin que dos gatos
+/// Un puzle de conejos: cuadrícula n×n dividida en n regiones conexas.
+/// La solución coloca un conejo por fila, columna y región, sin que dos conejos
 /// se toquen (ni siquiera en diagonal).
 class Puzzle {
   final int size;
@@ -14,7 +14,7 @@ class Puzzle {
   /// Identificador de región (0..size-1) para cada casilla, en orden de filas.
   final List<int> regions;
 
-  /// Casillas (índice fila × tamaño + columna) ocupadas por gatos.
+  /// Casillas (índice fila × tamaño + columna) ocupadas por conejos.
   final List<int> solution;
 
   final Difficulty difficulty;
@@ -34,7 +34,7 @@ class Puzzle {
       throw ArgumentError('La lista de regiones no coincide con el tamaño');
     }
     if (solution.length != size) {
-      throw ArgumentError('La solución debe tener $size gatos');
+      throw ArgumentError('La solución debe tener $size conejos');
     }
   }
 
@@ -55,9 +55,9 @@ class Puzzle {
     return groups;
   }
 
-  bool isSolution(Iterable<int> cats) {
-    if (cats.length != size) return false;
-    final placed = cats.toSet();
+  bool isSolution(Iterable<int> bunnies) {
+    if (bunnies.length != size) return false;
+    final placed = bunnies.toSet();
     if (placed.length != size) return false;
     for (var i = 0; i < size; i++) {
       if (!placed.contains(solution[i])) return false;

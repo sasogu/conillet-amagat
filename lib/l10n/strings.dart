@@ -6,10 +6,10 @@ class Strings {
 
   final bool catalan;
 
-  String get appName => 'Ronrón';
+  String get appName => 'Conillet amagat';
   String get tagline => catalan
-      ? 'Un gat per fila, columna i regió'
-      : 'Un gato por fila, columna y región';
+      ? 'Un conill per fila, columna i regió'
+      : 'Un conejo por fila, columna y región';
 
   String get dailyTitle => catalan ? 'Puzle diari' : 'Puzle diario';
   String get dailyDone => catalan ? 'Completat hui' : 'Completado hoy';
@@ -28,25 +28,33 @@ class Strings {
   String get restartTitle =>
       catalan ? 'Reiniciar el puzle?' : '¿Reiniciar el puzle?';
   String get restartBody => catalan
-      ? 'S\'esborraran els gats i les X que has posat.'
-      : 'Se borrarán los gatos y las X que has puesto.';
+      ? 'S\'esborraran els conills i les X que has posat.'
+      : 'Se borrarán los conejos y las X que has puesto.';
   String get undo => catalan ? 'Desfés' : 'Deshacer';
   String get hint => catalan ? 'Pista' : 'Pista';
   String get reset => catalan ? 'Reinicia' : 'Reiniciar';
   String get autoCross =>
       catalan ? 'Marca X automàticament' : 'Marcar X automáticamente';
   String get autoCrossShort => catalan ? 'X auto' : 'X auto';
-  String get cats => catalan ? 'Gats' : 'Gatos';
+  String get bunnies => catalan ? 'Conills' : 'Conejos';
+  String get lives => catalan ? 'Vides' : 'Vidas';
+  String wrongBunny(int remaining) => catalan
+      ? 'Conill mal col·locat. Et ${remaining == 1 ? 'queda' : 'queden'} $remaining ${remaining == 1 ? 'vida' : 'vides'}.'
+      : 'Conejo mal colocado. Te ${remaining == 1 ? 'queda' : 'quedan'} $remaining ${remaining == 1 ? 'vida' : 'vidas'}.';
+  String get noLivesTitle => catalan ? 'Sense vides' : 'Sin vidas';
+  String get noLivesBody => catalan
+      ? 'Has esgotat les tres vides. Reinicia el puzle per a tornar-ho a provar.'
+      : 'Has agotado las tres vidas. Reinicia el puzle para volver a intentarlo.';
   String get time => catalan ? 'Temps' : 'Tiempo';
   String get hints => catalan ? 'Pistes' : 'Pistas';
   String instructions() => catalan
-      ? 'Toca una casella per a marcar X. Doble toc per a posar un gat. Arrossega per a marcar diverses X.'
-      : 'Toca una casilla para marcar X. Doble toque para poner un gato. Arrastra para marcar varias X.';
+      ? 'Toca una casella per a marcar X. Doble toc per a posar un conill; si no hi va, perds una vida. Arrossega per a marcar diverses X.'
+      : 'Toca una casilla para marcar X. Doble toque para poner un conejo; si no va ahí, pierdes una vida. Arrastra para marcar varias X.';
 
   String get winTitle => catalan ? 'Puzle resolt!' : '¡Puzle resuelto!';
   String get winBody => catalan
-      ? 'Has col·locat tots els gats.'
-      : 'Has colocado todos los gatos.';
+      ? 'Has col·locat tots els conills.'
+      : 'Has colocado todos los conejos.';
   String get next => catalan ? 'Següent' : 'Siguiente';
   String get home => catalan ? 'Inici' : 'Inicio';
   String get playLevel => catalan ? 'Juga un nivell' : 'Jugar un nivel';
@@ -66,8 +74,8 @@ class Strings {
   String get valencian => 'Valencià';
   String get about => catalan ? 'Quant a' : 'Acerca de';
   String get aboutText => catalan
-      ? 'Un puzle de lògica de gats, sense anuncis, sense connexió i amb codi lliure.'
-      : 'Un puzle de lógica de gatos, sin anuncios, sin conexión y con código libre.';
+      ? 'Un puzle de lògica de conills, sense anuncis, sense connexió i amb codi lliure.'
+      : 'Un puzle de lógica de conejos, sin anuncios, sin conexión y con código libre.';
   String get sourceCode => catalan ? 'Codi font' : 'Código fuente';
   String get madeWith => catalan ? 'Fet amb Flutter' : 'Hecho con Flutter';
   String versionLabel(String version) =>

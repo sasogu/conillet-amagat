@@ -5,7 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../game/puzzle.dart';
 
-enum CellMark { none, cat, cross }
+enum CellMark { none, bunny, cross }
+
+/// Vidas disponibles al empezar o reiniciar un puzle.
+const int startingLives = 3;
 
 class SettingsData {
   final ThemeMode themeMode;
@@ -95,6 +98,7 @@ class SavedGame {
   final int hintsUsed;
   final String mode;
   final int levelIndex;
+  final int lives;
 
   SavedGame({
     required this.puzzle,
@@ -103,6 +107,7 @@ class SavedGame {
     required this.hintsUsed,
     required this.mode,
     required this.levelIndex,
+    this.lives = startingLives,
   });
 
   Map<String, Object?> toJson() => {
@@ -112,6 +117,7 @@ class SavedGame {
     'hints': hintsUsed,
     'mode': mode,
     'level': levelIndex,
+    'lives': lives,
   };
 
   factory SavedGame.fromJson(Map<String, Object?> json) => SavedGame(
@@ -123,6 +129,7 @@ class SavedGame {
     hintsUsed: (json['hints'] as num?)?.toInt() ?? 0,
     mode: json['mode'] as String? ?? 'level',
     levelIndex: (json['level'] as num?)?.toInt() ?? 1,
+    lives: (json['lives'] as num?)?.toInt() ?? startingLives,
   );
 }
 

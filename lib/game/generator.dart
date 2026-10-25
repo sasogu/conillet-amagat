@@ -6,7 +6,7 @@ class _BudgetExceeded implements Exception {}
 
 /// Genera un puzle determinista para [size] y [seed].
 ///
-/// Estrategia: se parte de una solución válida y cada gato empieza siendo una
+/// Estrategia: se parte de una solución válida y cada conejo empieza siendo una
 /// región de una casilla. Después se reparten las casillas libres entre las
 /// regiones vecinas comprobando, tras cada asignación, que la solución sigue
 /// siendo única. Así las regiones son conexas y el puzle acaba con solución
@@ -124,7 +124,7 @@ List<int> _regionOptions(int size, List<int> regions, int cell) {
 }
 
 /// Cuenta soluciones de un tablero parcial. Las casillas sin región asignada
-/// todavía no pueden contener gatos.
+/// todavía no pueden contener conejos.
 int countSolutionsPartial(int size, List<int> regions, {int limit = 2}) {
   final allowed = List<int>.filled(size, 0);
   final fullMask = (1 << size) - 1;

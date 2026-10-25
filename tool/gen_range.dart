@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:ronron/game/generator.dart';
+import 'package:conillet_amagat/game/generator.dart';
 
 void main(List<String> args) {
   if (args.length != 4) {

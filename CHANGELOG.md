@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0 — 2026-10-25
+
+- La app pasa a llamarse **Conillet amagat**: el gato deja paso a un conejo.
+- Nuevo arte del conejo en el tablero y en el icono de la aplicación.
+- Textos en castellano y valenciano adaptados a los conejos.
+- Nuevas **tres vidas**: colocar un conejo en una casilla incorrecta descuenta
+  una vida y deja una X; al agotarlas se puede reiniciar el puzle. Las pistas y
+  el deshacer no devuelven vidas.
+- Tablero con iluminación y bordes de región más definidos, X más finas y
+  conejos con orejas interiores.
+- El identificador `es.sasogu.ronron` se mantiene para conservar el progreso
+  y la firma de las instalaciones anteriores.
+
 ## 0.1.2 — 2026-10-25
 
 - Identificador de la aplicación cambiado a `es.sasogu.ronron` antes de la

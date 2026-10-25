@@ -12,7 +12,7 @@ Future<void> main() async {
     final prefs = await SharedPreferences.getInstance();
     final repository = await PuzzleRepository.load();
     final app = AppState(store: GameStore(prefs), repository: repository);
-    runApp(RonronApp(app: app));
+    runApp(ConilletAmagatApp(app: app));
   } catch (error) {
     runApp(_StartupError(error: '$error'));
   }

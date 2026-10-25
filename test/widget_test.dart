@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ronron/app.dart';
-import 'package:ronron/app_state.dart';
-import 'package:ronron/data/game_store.dart';
-import 'package:ronron/data/puzzle_repository.dart';
-import 'package:ronron/ui/board_view.dart';
+import 'package:conillet_amagat/app.dart';
+import 'package:conillet_amagat/app_state.dart';
+import 'package:conillet_amagat/data/game_store.dart';
+import 'package:conillet_amagat/data/puzzle_repository.dart';
+import 'package:conillet_amagat/ui/board_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<AppState> createApp() async {
@@ -27,9 +27,9 @@ void main() {
     addTearDown(tester.view.reset);
 
     final app = await createApp();
-    await tester.pumpWidget(RonronApp(app: app));
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
     await tester.pump();
-    expect(find.text('Ronrón'), findsOneWidget);
+    expect(find.text('Conillet amagat'), findsOneWidget);
     expect(find.text('Puzle diario'), findsOneWidget);
 
     await tester.scrollUntilVisible(
@@ -54,7 +54,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     final app = await createApp();
-    await tester.pumpWidget(RonronApp(app: app));
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
     await tester.pump();
 
     await tester.tap(find.byIcon(Icons.tune));
@@ -69,6 +69,72 @@ void main() {
     await tester.tap(find.text('Tanca'));
     await tester.pumpAndSettle();
     expect(find.text('Nivells'), findsOneWidget);
+  });
+
+  testWidgets('un fallo descuenta una vida y sin vidas pide reiniciar', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final app = await createApp();
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
+    await tester.pump();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('level-6')),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.byKey(const ValueKey('level-6')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+
+    final puzzle = app.repository.levelPuzzle(6, 1);
+    final rect = tester.getRect(find.byType(BoardView));
+    final cellSize = rect.width / puzzle.size;
+    final wrong = List.generate(
+      puzzle.cellCount,
+      (index) => index,
+    ).firstWhere((cell) => !puzzle.solution.contains(cell));
+    final point =
+        rect.topLeft +
+        Offset(
+          (wrong % puzzle.size + 0.5) * cellSize,
+          (wrong ~/ puzzle.size + 0.5) * cellSize,
+        );
+
+    Future<void> doubleTap() async {
+      await tester.tapAt(point);
+      await tester.pump(const Duration(milliseconds: 60));
+      await tester.tapAt(point);
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
+    await doubleTap();
+    expect(find.text('Conejo mal colocado. Te quedan 2 vidas.'), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(2));
+    expect(find.byIcon(Icons.favorite_border_rounded), findsOneWidget);
+
+    await doubleTap();
+    expect(find.byIcon(Icons.favorite_rounded), findsOneWidget);
+    expect(find.text('Conejo mal colocado. Te queda 1 vida.'), findsOneWidget);
+
+    await doubleTap();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('Sin vidas'), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_rounded), findsNothing);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Reiniciar'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Sin vidas'), findsNothing);
+    expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(3));
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
   });
 
   testWidgets('el tablero distingue un toque de un doble toque', (

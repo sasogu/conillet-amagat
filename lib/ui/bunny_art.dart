@@ -2,55 +2,84 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-/// Dibuja una cara de gato geométrica y original.
-void paintCatFace(
+/// Dibuja una cara de conejo geométrica y original.
+void paintBunnyFace(
   Canvas canvas,
   Offset center,
   double radius, {
   required Color body,
   required Color eye,
   Color? outline,
+  Color? innerEar,
 }) {
   final head = Rect.fromCircle(
-    center: center.translate(0, radius * 0.08),
+    center: center.translate(0, radius * 0.10),
     radius: radius,
   );
   final bodyPaint = Paint()..color = body;
 
-  final path = Path()
-    ..moveTo(head.left + head.width * 0.02, head.center.dy - head.height * 0.18)
-    ..lineTo(head.left + head.width * 0.20, head.top - head.height * 0.22)
-    ..lineTo(head.left + head.width * 0.48, head.top + head.height * 0.12)
-    ..lineTo(head.right - head.width * 0.48, head.top + head.height * 0.12)
-    ..lineTo(head.right - head.width * 0.20, head.top - head.height * 0.22)
-    ..lineTo(
-      head.right - head.width * 0.02,
-      head.center.dy - head.height * 0.18,
-    )
-    ..close();
-  canvas.drawPath(path, bodyPaint);
+  for (final side in const [-1.0, 1.0]) {
+    canvas.save();
+    canvas.translate(
+      head.center.dx + side * radius * 0.44,
+      head.center.dy - radius * 1.02,
+    );
+    canvas.rotate(side * 0.10);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset.zero,
+        width: radius * 0.54,
+        height: radius * 1.46,
+      ),
+      bodyPaint,
+    );
+    if (innerEar != null) {
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: radius * 0.26,
+          height: radius * 1.0,
+        ),
+        Paint()..color = innerEar,
+      );
+    }
+    canvas.restore();
+  }
+
   canvas.drawCircle(head.center, radius, bodyPaint);
 
   final eyePaint = Paint()..color = eye;
   final eyeRadius = math.max(radius * 0.15, 1.1);
   canvas.drawCircle(
-    head.center.translate(-radius * 0.38, -radius * 0.08),
+    head.center.translate(-radius * 0.36, -radius * 0.06),
     eyeRadius,
     eyePaint,
   );
   canvas.drawCircle(
-    head.center.translate(radius * 0.38, -radius * 0.08),
+    head.center.translate(radius * 0.36, -radius * 0.06),
     eyeRadius,
     eyePaint,
   );
 
   final nosePaint = Paint()..color = eye;
   final nose = Path()
-    ..moveTo(head.center.dx - radius * 0.13, head.center.dy + radius * 0.28)
-    ..lineTo(head.center.dx + radius * 0.13, head.center.dy + radius * 0.28)
-    ..lineTo(head.center.dx, head.center.dy + radius * 0.45)
+    ..moveTo(head.center.dx - radius * 0.12, head.center.dy + radius * 0.26)
+    ..lineTo(head.center.dx + radius * 0.12, head.center.dy + radius * 0.26)
+    ..lineTo(head.center.dx, head.center.dy + radius * 0.42)
     ..close();
   canvas.drawPath(nose, nosePaint);
+
+  canvas.drawRRect(
+    RRect.fromRectAndRadius(
+      Rect.fromCenter(
+        center: head.center.translate(0, radius * 0.56),
+        width: radius * 0.20,
+        height: radius * 0.16,
+      ),
+      Radius.circular(radius * 0.05),
+    ),
+    Paint()..color = const Color(0xFFFFF8EA),
+  );
 
   if (outline != null) {
     final outlinePaint = Paint()
@@ -61,8 +90,8 @@ void paintCatFace(
   }
 }
 
-class CatLogo extends StatelessWidget {
-  const CatLogo({super.key, this.size = 56});
+class BunnyLogo extends StatelessWidget {
+  const BunnyLogo({super.key, this.size = 56});
 
   final double size;
 
@@ -70,12 +99,12 @@ class CatLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.square(
       dimension: size,
-      child: CustomPaint(painter: _CatLogoPainter()),
+      child: CustomPaint(painter: _BunnyLogoPainter()),
     );
   }
 }
 
-class _CatLogoPainter extends CustomPainter {
+class _BunnyLogoPainter extends CustomPainter {
   static const _tiles = [
     Color(0xFFF3C6B8),
     Color(0xFFF4E1AD),
@@ -117,12 +146,13 @@ class _CatLogoPainter extends CustomPainter {
       );
     }
 
-    paintCatFace(
+    paintBunnyFace(
       canvas,
-      Offset(size.width / 2, size.height * 0.53),
-      size.width * 0.245,
+      Offset(size.width / 2, size.height * 0.57),
+      size.width * 0.22,
       body: const Color(0xFF2F2A26),
       eye: const Color(0xFFFFF8EA),
+      innerEar: const Color(0xFFE7A79E),
     );
   }
 

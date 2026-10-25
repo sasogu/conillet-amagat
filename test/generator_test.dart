@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ronron/game/generator.dart';
-import 'package:ronron/game/solver.dart';
+import 'package:conillet_amagat/game/generator.dart';
+import 'package:conillet_amagat/game/solver.dart';
 
 void main() {
   for (final size in [6, 7]) {

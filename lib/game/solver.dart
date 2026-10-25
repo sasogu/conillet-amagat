@@ -161,7 +161,7 @@ HumanSolveResult humanSolve(Puzzle puzzle) {
     }
 
     // Si todos los candidatos de una región están en una fila (o columna),
-    // el gato de esa fila (o columna) pertenece a la región.
+    // el conejo de esa fila (o columna) pertenece a la región.
     for (var region = 0; region < size; region++) {
       if (regionCat[region]) continue;
       final candidates = <int>[
@@ -210,12 +210,12 @@ HumanSolveResult humanSolve(Puzzle puzzle) {
     if (!changed) break;
   }
 
-  var cats = 0;
+  var bunnies = 0;
   for (final value in isCat) {
-    if (value) cats++;
+    if (value) bunnies++;
   }
   return HumanSolveResult(
-    solved: !contradiction && cats == size,
+    solved: !contradiction && bunnies == size,
     contradiction: contradiction,
     usedInteractions: usedInteractions,
   );

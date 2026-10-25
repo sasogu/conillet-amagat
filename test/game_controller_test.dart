@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ronron/app_state.dart';
-import 'package:ronron/data/game_store.dart';
-import 'package:ronron/data/puzzle_repository.dart';
-import 'package:ronron/game/game_controller.dart';
+import 'package:conillet_amagat/app_state.dart';
+import 'package:conillet_amagat/data/game_store.dart';
+import 'package:conillet_amagat/data/puzzle_repository.dart';
+import 'package:conillet_amagat/game/game_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Harness {
@@ -39,21 +39,23 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'toque marca X, otro toque la borra y doble toque pone un gato',
+    'toque marca X, otro toque la borra y doble toque esconde un conejo',
     () async {
       final harness = await createHarness();
       final controller = harness.controller;
       addTearDown(controller.dispose);
 
+      final bunnyCell = controller.puzzle.solution.first;
       expect(controller.marks[0], CellMark.none);
       controller.handleTap(0);
       expect(controller.marks[0], CellMark.cross);
       controller.handleTap(0);
       expect(controller.marks[0], CellMark.none);
-      controller.handleDoubleTap(0);
-      expect(controller.marks[0], CellMark.cat);
-      controller.handleDoubleTap(0);
-      expect(controller.marks[0], CellMark.none);
+      expect(controller.handleDoubleTap(bunnyCell), DoubleTapResult.placed);
+      expect(controller.marks[bunnyCell], CellMark.bunny);
+      expect(controller.handleDoubleTap(bunnyCell), DoubleTapResult.removed);
+      expect(controller.marks[bunnyCell], CellMark.none);
+      expect(controller.lives, startingLives);
     },
   );
 
@@ -64,10 +66,13 @@ void main() {
       final controller = harness.controller;
       addTearDown(controller.dispose);
 
-      final cell = 2;
-      controller.handleDoubleTap(cell);
-      final blocked = controller.blockedCells;
       final puzzle = controller.puzzle;
+      final cell = puzzle.solution.firstWhere((cell) {
+        return puzzle.rowOf(cell) + 1 < puzzle.size &&
+            puzzle.colOf(cell) + 1 < puzzle.size;
+      });
+      expect(controller.handleDoubleTap(cell), DoubleTapResult.placed);
+      final blocked = controller.blockedCells;
       final row = puzzle.rowOf(cell);
       final col = puzzle.colOf(cell);
 
@@ -86,21 +91,57 @@ void main() {
     },
   );
 
-  test('detecta gatos que comparten fila y deshace movimientos', () async {
+  test('un conejo mal colocado quita una vida y deja una X', () async {
     final harness = await createHarness();
     final controller = harness.controller;
     addTearDown(controller.dispose);
 
-    controller.handleDoubleTap(0);
-    controller.handleDoubleTap(1);
-    expect(controller.conflictCells, containsAll({0, 1}));
+    final wrong = List.generate(
+      controller.puzzle.cellCount,
+      (index) => index,
+    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
+
+    expect(controller.handleDoubleTap(wrong), DoubleTapResult.wrong);
+    expect(controller.lives, startingLives - 1);
+    expect(controller.marks[wrong], CellMark.cross);
+    expect(controller.failed, isFalse);
 
     controller.undo();
-    expect(controller.marks[1], CellMark.none);
-    expect(controller.conflictCells, isEmpty);
+    expect(controller.marks[wrong], CellMark.none);
+    expect(controller.lives, startingLives - 1);
   });
 
-  test('la pista coloca un gato de la solución', () async {
+  test('tres fallos agotan las vidas y bloquean el tablero', () async {
+    final harness = await createHarness();
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+
+    final wrong = [
+      for (var cell = 0; cell < controller.puzzle.cellCount; cell++)
+        if (!controller.puzzle.solution.contains(cell)) cell,
+    ];
+
+    expect(controller.handleDoubleTap(wrong[0]), DoubleTapResult.wrong);
+    expect(controller.handleDoubleTap(wrong[1]), DoubleTapResult.wrong);
+    expect(
+      controller.handleDoubleTap(wrong[2]),
+      DoubleTapResult.outOfLives,
+    );
+    expect(controller.lives, 0);
+    expect(controller.failed, isTrue);
+    expect(controller.canPlay, isFalse);
+    expect(controller.hint(), isNull);
+
+    controller.handleDoubleTap(wrong[3]);
+    expect(controller.marks[wrong[3]], CellMark.none);
+
+    controller.reset();
+    expect(controller.lives, startingLives);
+    expect(controller.failed, isFalse);
+    expect(controller.marks.every((mark) => mark == CellMark.none), isTrue);
+  });
+
+  test('la pista coloca un conejo de la solución sin gastar vidas', () async {
     final harness = await createHarness();
     final controller = harness.controller;
     addTearDown(controller.dispose);
@@ -108,8 +149,9 @@ void main() {
     final cell = controller.hint();
     expect(cell, isNotNull);
     expect(controller.puzzle.solution, contains(cell));
-    expect(controller.marks[cell!], CellMark.cat);
+    expect(controller.marks[cell!], CellMark.bunny);
     expect(controller.hintsUsed, 1);
+    expect(controller.lives, startingLives);
   });
 
   test('resolver el puzle termina la partida y guarda el progreso', () async {
@@ -130,18 +172,28 @@ void main() {
     expect(harness.app.savedGame, isNull);
   });
 
-  test('guarda y restaura la partida', () async {
+  test('guarda y restaura la partida y las vidas', () async {
     final harness = await createHarness();
     final controller = harness.controller;
+    final bunnyCell = controller.puzzle.solution.firstWhere(
+      (cell) => cell != 0,
+    );
+    final wrong = List.generate(
+      controller.puzzle.cellCount,
+      (index) => index,
+    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
     controller.handleTap(0);
-    controller.handleDoubleTap(1);
+    controller.handleDoubleTap(bunnyCell);
+    controller.handleDoubleTap(wrong);
     controller.pause();
     await Future<void>.delayed(const Duration(milliseconds: 30));
 
     final saved = harness.app.store.readGame();
     expect(saved, isNotNull);
     expect(saved!.marks[0], CellMark.cross.index);
-    expect(saved.marks[1], CellMark.cat.index);
+    expect(saved.marks[bunnyCell], CellMark.bunny.index);
+    expect(saved.marks[wrong], CellMark.cross.index);
+    expect(saved.lives, startingLives - 1);
 
     final restored = GameController(
       puzzle: controller.puzzle,
@@ -151,7 +203,9 @@ void main() {
       restore: saved,
     );
     expect(restored.marks[0], CellMark.cross);
-    expect(restored.marks[1], CellMark.cat);
+    expect(restored.marks[bunnyCell], CellMark.bunny);
+    expect(restored.lives, startingLives - 1);
+    expect(restored.failed, isFalse);
     restored.dispose();
     controller.dispose();
   });
@@ -161,12 +215,20 @@ void main() {
     final controller = harness.controller;
     addTearDown(controller.dispose);
 
+    final wrong = List.generate(
+      controller.puzzle.cellCount,
+      (index) => index,
+    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
     controller.handleTap(0);
     controller.hint();
+    controller.handleDoubleTap(wrong);
+    expect(controller.lives, startingLives - 1);
     controller.reset();
     expect(controller.marks.every((mark) => mark == CellMark.none), isTrue);
     expect(controller.hintsUsed, 0);
     expect(controller.elapsedSeconds, 0);
+    expect(controller.lives, startingLives);
+    expect(controller.failed, isFalse);
   });
 
   test(

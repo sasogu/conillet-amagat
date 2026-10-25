@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ronron/game/puzzle.dart';
-import 'package:ronron/game/solver.dart';
+import 'package:conillet_amagat/game/puzzle.dart';
+import 'package:conillet_amagat/game/solver.dart';
 
 void main() {
   final data =

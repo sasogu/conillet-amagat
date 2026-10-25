@@ -5,7 +5,7 @@ import '../app_state.dart';
 import '../data/game_store.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
-import 'cat_art.dart';
+import 'bunny_art.dart';
 import 'game_page.dart';
 import 'settings_sheet.dart';
 
@@ -166,7 +166,7 @@ class _Header extends StatelessWidget {
     final theme = Theme.of(context);
     return Row(
       children: [
-        const CatLogo(size: 58),
+        const BunnyLogo(size: 58),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
@@ -213,7 +213,7 @@ class _ContinueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cats = saved.marks.where((mark) => mark == CellMark.cat.index).length;
+    final bunnies = saved.marks.where((mark) => mark == CellMark.bunny.index).length;
     final subtitle = saved.mode == 'daily'
         ? '${strings.dailyTitle} · ${strings.sizeLabel(saved.puzzle.size)}'
         : '${strings.levelLabel(saved.levelIndex)} · ${strings.sizeLabel(saved.puzzle.size)}';
@@ -258,7 +258,7 @@ class _ContinueCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$cats/${saved.puzzle.size} ${strings.cats.toLowerCase()} · '
+                      '$bunnies/${saved.puzzle.size} ${strings.bunnies.toLowerCase()} · '
                       '${Strings.formatDuration(saved.elapsedSeconds)}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -392,7 +392,7 @@ class _DailyCard extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.pets,
+                                Icons.cruelty_free,
                                 size: 18,
                                 color: scheme.primaryContainer,
                               ),

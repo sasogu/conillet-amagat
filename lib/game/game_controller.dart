@@ -7,6 +7,8 @@ import '../app_state.dart';
 import '../data/game_store.dart';
 import 'puzzle.dart';
 
+enum DoubleTapResult { none, placed, removed, wrong, outOfLives }
+
 class _Move {
   const _Move(this.cell, this.previous);
 
@@ -26,6 +28,8 @@ class GameController extends ChangeNotifier {
     if (restore != null) {
       elapsedSeconds = restore.elapsedSeconds;
       hintsUsed = restore.hintsUsed;
+      lives = restore.lives.clamp(0, startingLives);
+      failed = lives == 0;
       for (var index = 0; index < puzzle.cellCount; index++) {
         final value = restore.marks[index];
         marks[index] = value >= 0 && value < CellMark.values.length
@@ -53,25 +57,29 @@ class GameController extends ChangeNotifier {
 
   int elapsedSeconds = 0;
   int hintsUsed = 0;
+  int lives = startingLives;
   bool finished = false;
+  bool failed = false;
   bool paused = false;
 
-  bool get canUndo => _history.isNotEmpty && !finished;
+  bool get canUndo => _history.isNotEmpty && !finished && !failed;
+
+  bool get canPlay => !finished && !failed;
 
   bool get autoCrossEnabled => app.settings.autoCross;
 
-  int get catCount => marks.where((mark) => mark == CellMark.cat).length;
+  int get bunnyCount => marks.where((mark) => mark == CellMark.bunny).length;
 
-  Set<int> get cats => {
+  Set<int> get bunnies => {
     for (var cell = 0; cell < marks.length; cell++)
-      if (marks[cell] == CellMark.cat) cell,
+      if (marks[cell] == CellMark.bunny) cell,
   };
 
-  /// Casillas descartadas automáticamente por los gatos ya colocados.
+  /// Casillas descartadas automáticamente por los conejos ya colocados.
   Set<int> get blockedCells {
     if (!app.settings.autoCross) return const {};
     final blocked = <int>{};
-    for (final cell in cats) {
+    for (final cell in bunnies) {
       final row = puzzle.rowOf(cell);
       final col = puzzle.colOf(cell);
       for (var otherCol = 0; otherCol < puzzle.size; otherCol++) {
@@ -83,12 +91,12 @@ class GameController extends ChangeNotifier {
       blocked.addAll(_regionCells[puzzle.regions[cell]]);
       blocked.addAll(_neighbours(cell));
     }
-    blocked.removeAll(cats);
+    blocked.removeAll(bunnies);
     return blocked;
   }
 
   Set<int> get conflictCells {
-    final list = cats.toList(growable: false);
+    final list = bunnies.toList(growable: false);
     final conflicts = <int>{};
     for (var i = 0; i < list.length; i++) {
       for (var j = i + 1; j < list.length; j++) {
@@ -110,12 +118,12 @@ class GameController extends ChangeNotifier {
     return conflicts;
   }
 
-  bool get isSolvedByPlayer => puzzle.isSolution(cats);
+  bool get isSolvedByPlayer => puzzle.isSolution(bunnies);
 
   void handleTap(int cell) {
-    if (finished) return;
+    if (!canPlay) return;
     switch (marks[cell]) {
-      case CellMark.cat:
+      case CellMark.bunny:
       case CellMark.cross:
         _apply(cell, CellMark.none);
       case CellMark.none:
@@ -124,14 +132,33 @@ class GameController extends ChangeNotifier {
     }
   }
 
-  void handleDoubleTap(int cell) {
-    if (finished) return;
-    final next = marks[cell] == CellMark.cat ? CellMark.none : CellMark.cat;
-    _apply(cell, next, haptic: next == CellMark.cat);
+  DoubleTapResult handleDoubleTap(int cell) {
+    if (!canPlay) return DoubleTapResult.none;
+    if (marks[cell] == CellMark.bunny) {
+      _apply(cell, CellMark.none);
+      return DoubleTapResult.removed;
+    }
+
+    if (!puzzle.solution.contains(cell)) {
+      lives = (lives - 1).clamp(0, startingLives);
+      final outOfLives = lives == 0;
+      if (outOfLives) {
+        failed = true;
+        _ticker?.cancel();
+      }
+      _apply(cell, CellMark.cross);
+      HapticFeedback.heavyImpact();
+      if (outOfLives) _persistNow();
+      notifyListeners();
+      return outOfLives ? DoubleTapResult.outOfLives : DoubleTapResult.wrong;
+    }
+
+    _apply(cell, CellMark.bunny, haptic: true);
+    return DoubleTapResult.placed;
   }
 
   void handleDrag(int cell) {
-    if (finished) return;
+    if (!canPlay) return;
     if (marks[cell] != CellMark.none) return;
     _apply(cell, CellMark.cross);
   }
@@ -145,15 +172,15 @@ class GameController extends ChangeNotifier {
   }
 
   int? hint() {
-    if (finished) return null;
+    if (!canPlay) return null;
     final candidates = <int>[
       for (final cell in puzzle.solution)
-        if (marks[cell] != CellMark.cat) cell,
+        if (marks[cell] != CellMark.bunny) cell,
     ];
     if (candidates.isEmpty) return null;
     final cell = candidates.first;
     hintsUsed += 1;
-    _apply(cell, CellMark.cat, haptic: true);
+    _apply(cell, CellMark.bunny, haptic: true);
     return cell;
   }
 
@@ -165,13 +192,15 @@ class GameController extends ChangeNotifier {
     }
     elapsedSeconds = 0;
     hintsUsed = 0;
+    lives = startingLives;
+    failed = false;
     _restartTicker();
     _saveSoon();
     notifyListeners();
   }
 
   void pause() {
-    if (paused || finished) return;
+    if (paused || !canPlay) return;
     paused = true;
     _ticker?.cancel();
     _persistNow();
@@ -179,7 +208,7 @@ class GameController extends ChangeNotifier {
   }
 
   void resume() {
-    if (!paused || finished) return;
+    if (!paused || !canPlay) return;
     paused = false;
     _startTicker();
     notifyListeners();
@@ -197,8 +226,8 @@ class GameController extends ChangeNotifier {
   }
 
   void _checkWin() {
-    if (finished || _winRecorded) return;
-    if (!puzzle.isSolution(cats)) return;
+    if (finished || failed || _winRecorded) return;
+    if (!puzzle.isSolution(bunnies)) return;
     if (conflictCells.isNotEmpty) return;
     finished = true;
     _winRecorded = true;
@@ -231,7 +260,7 @@ class GameController extends ChangeNotifier {
 
   void _startTicker() {
     _ticker?.cancel();
-    if (paused || finished) return;
+    if (paused || !canPlay) return;
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (paused || finished) return;
       elapsedSeconds += 1;
@@ -252,6 +281,7 @@ class GameController extends ChangeNotifier {
     hintsUsed: hintsUsed,
     mode: mode,
     levelIndex: levelIndex,
+    lives: lives,
   );
 
   void _saveSoon() {

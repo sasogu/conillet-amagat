@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../data/game_store.dart';
 import '../game/puzzle.dart';
 import '../theme.dart';
-import 'cat_art.dart';
+import 'bunny_art.dart';
 
 class BoardView extends StatefulWidget {
   const BoardView({
@@ -155,9 +155,22 @@ class _BoardPainter extends CustomPainter {
       }
     }
 
+    final lightPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.white.withValues(alpha: 0.07),
+          Colors.white.withValues(alpha: 0.0),
+          Colors.black.withValues(alpha: 0.03),
+        ],
+        stops: const [0.0, 0.55, 1.0],
+      ).createShader(Offset.zero & size);
+    canvas.drawRect(Offset.zero & size, lightPaint);
+
     final gridPaint = Paint()
       ..color = colors.grid
-      ..strokeWidth = 0.8;
+      ..strokeWidth = 0.7;
     for (var index = 1; index < n; index++) {
       final offset = index * cellSize;
       canvas.drawLine(
@@ -168,35 +181,28 @@ class _BoardPainter extends CustomPainter {
       canvas.drawLine(Offset(0, offset), Offset(size.width, offset), gridPaint);
     }
 
+    final borderWidth = math.max(2.5, cellSize * 0.075);
     final borderPaint = Paint()
       ..color = colors.border
-      ..strokeWidth = math.max(2.5, cellSize * 0.075)
+      ..strokeWidth = borderWidth
       ..strokeCap = StrokeCap.square;
-    for (var cell = 0; cell < puzzle.cellCount; cell++) {
-      final row = puzzle.rowOf(cell);
-      final col = puzzle.colOf(cell);
-      final region = puzzle.regions[cell];
-      final left = col * cellSize;
-      final top = row * cellSize;
-      final right = left + cellSize;
-      final bottom = top + cellSize;
-      if (row == 0 || puzzle.regions[cell - n] != region) {
-        canvas.drawLine(Offset(left, top), Offset(right, top), borderPaint);
-      }
-      if (col == 0 || puzzle.regions[cell - 1] != region) {
-        canvas.drawLine(Offset(left, top), Offset(left, bottom), borderPaint);
-      }
-      if (row == n - 1) {
-        canvas.drawLine(
-          Offset(left, bottom),
-          Offset(right, bottom),
-          borderPaint,
-        );
-      }
-      if (col == n - 1) {
-        canvas.drawLine(Offset(right, top), Offset(right, bottom), borderPaint);
-      }
-    }
+    final borderShadow = Paint()
+      ..color = colors.shadow
+      ..strokeWidth = borderWidth
+      ..strokeCap = StrokeCap.round
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, borderWidth * 1.1);
+    _paintRegionBorders(canvas, size, cellSize, borderShadow);
+    _paintRegionBorders(canvas, size, cellSize, borderPaint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        (Offset.zero & size).deflate(borderWidth * 0.4),
+        Radius.circular(math.max(14, size.width * 0.035)),
+      ),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = colors.border.withValues(alpha: 0.55),
+    );
 
     for (var cell = 0; cell < puzzle.cellCount; cell++) {
       final row = puzzle.rowOf(cell);
@@ -208,13 +214,14 @@ class _BoardPainter extends CustomPainter {
         cellSize,
       );
       final mark = marks[cell];
-      if (mark == CellMark.cat) {
-        paintCatFace(
+      if (mark == CellMark.bunny) {
+        paintBunnyFace(
           canvas,
           rect.center,
-          cellSize * 0.235,
-          body: colors.cat,
-          eye: colors.catEye,
+          cellSize * 0.245,
+          body: colors.bunny,
+          eye: colors.bunnyEye,
+          innerEar: colors.bunnyEye.withValues(alpha: 0.35),
         );
         if (conflicts.contains(cell)) {
           canvas.drawRRect(
@@ -236,6 +243,36 @@ class _BoardPainter extends CustomPainter {
     }
   }
 
+  void _paintRegionBorders(
+    Canvas canvas,
+    Size size,
+    double cellSize,
+    Paint paint,
+  ) {
+    final n = puzzle.size;
+    for (var cell = 0; cell < puzzle.cellCount; cell++) {
+      final row = puzzle.rowOf(cell);
+      final col = puzzle.colOf(cell);
+      final region = puzzle.regions[cell];
+      final left = col * cellSize;
+      final top = row * cellSize;
+      final right = left + cellSize;
+      final bottom = top + cellSize;
+      if (row == 0 || puzzle.regions[cell - n] != region) {
+        canvas.drawLine(Offset(left, top), Offset(right, top), paint);
+      }
+      if (col == 0 || puzzle.regions[cell - 1] != region) {
+        canvas.drawLine(Offset(left, top), Offset(left, bottom), paint);
+      }
+      if (row == n - 1) {
+        canvas.drawLine(Offset(left, bottom), Offset(right, bottom), paint);
+      }
+      if (col == n - 1) {
+        canvas.drawLine(Offset(right, top), Offset(right, bottom), paint);
+      }
+    }
+  }
+
   void _paintCross(
     Canvas canvas,
     Rect rect,
@@ -243,10 +280,10 @@ class _BoardPainter extends CustomPainter {
     double cellSize, {
     required bool strong,
   }) {
-    final inset = cellSize * 0.27;
+    final inset = cellSize * 0.295;
     final paint = Paint()
-      ..color = strong ? color : color.withValues(alpha: 0.62)
-      ..strokeWidth = math.max(1.2, cellSize * (strong ? 0.055 : 0.042))
+      ..color = strong ? color : color.withValues(alpha: 0.55)
+      ..strokeWidth = math.max(1.2, cellSize * (strong ? 0.05 : 0.038))
       ..strokeCap = StrokeCap.round;
     canvas.drawLine(
       rect.topLeft.translate(inset, inset),

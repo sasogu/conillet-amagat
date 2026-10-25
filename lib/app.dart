@@ -5,8 +5,8 @@ import 'app_state.dart';
 import 'theme.dart';
 import 'ui/home_page.dart';
 
-class RonronApp extends StatelessWidget {
-  const RonronApp({super.key, required this.app});
+class ConilletAmagatApp extends StatelessWidget {
+  const ConilletAmagatApp({super.key, required this.app});
 
   final AppState app;
 

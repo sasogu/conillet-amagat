@@ -78,22 +78,24 @@ class AppTheme {
 class BoardColors {
   const BoardColors({
     required this.regions,
-    required this.cat,
-    required this.catEye,
+    required this.bunny,
+    required this.bunnyEye,
     required this.cross,
     required this.autoCross,
     required this.border,
     required this.grid,
+    required this.shadow,
     required this.conflict,
   });
 
   final List<Color> regions;
-  final Color cat;
-  final Color catEye;
+  final Color bunny;
+  final Color bunnyEye;
   final Color cross;
   final Color autoCross;
   final Color border;
   final Color grid;
+  final Color shadow;
   final Color conflict;
 
   static const BoardColors light = BoardColors(
@@ -109,12 +111,13 @@ class BoardColors {
       Color(0xFFEAD6BE),
       Color(0xFFD9E2F0),
     ],
-    cat: Color(0xFF2F2A26),
-    catEye: Color(0xFFFFF8EA),
+    bunny: Color(0xFF2F2A26),
+    bunnyEye: Color(0xFFFFF8EA),
     cross: Color(0xFF8A7F72),
     autoCross: Color(0xFFB4A99C),
     border: Color(0xFFFFFCF6),
     grid: Color(0x14000000),
+    shadow: Color(0x2E6B5A45),
     conflict: Color(0xFFD1495B),
   );
 
@@ -131,12 +134,13 @@ class BoardColors {
       Color(0xFF5C6E8B), // pizarra
       Color(0xFF8B7960), // arena
     ],
-    cat: Color(0xFFF7EBD2),
-    catEye: Color(0xFF221E1A),
+    bunny: Color(0xFFF7EBD2),
+    bunnyEye: Color(0xFF221E1A),
     cross: Color(0xFFE6DCCB),
     autoCross: Color(0xFF4A453D),
     border: Color(0xFF0A0D0C),
     grid: Color(0x1AFFFFFF),
+    shadow: Color(0x66000000),
     conflict: Color(0xFFFF8492),
   );
 
