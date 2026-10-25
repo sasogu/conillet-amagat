@@ -272,6 +272,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('3 zanahorias para el conejo'), findsOneWidget);
+    expect(find.text('Salto rápido: 3 etapas'), findsOneWidget);
     expect(
       find.descendant(of: dialog, matching: find.textContaining('+')),
       findsOneWidget,

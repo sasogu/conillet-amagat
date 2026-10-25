@@ -210,6 +210,22 @@ void main() {
     controller.dispose();
   });
 
+  test('una etapa lenta avanza solo una etapa', () async {
+    final harness = await createHarness(mode: 'campaign', level: 7);
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+    controller.elapsedSeconds = 500;
+
+    for (final cell in controller.puzzle.solution) {
+      controller.handleDoubleTap(cell);
+    }
+
+    expect(controller.finished, isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 60));
+    expect(harness.app.campaignStage, 8);
+    expect(harness.app.store.readCampaignStage(), 8);
+  });
+
   test('completar una etapa avanza la campaña', () async {
     final harness = await createHarness(mode: 'campaign', level: 7);
     final controller = harness.controller;
@@ -222,8 +238,8 @@ void main() {
 
     expect(controller.finished, isTrue);
     await Future<void>.delayed(const Duration(milliseconds: 60));
-    expect(harness.app.campaignStage, 8);
-    expect(harness.app.store.readCampaignStage(), 8);
+    expect(harness.app.campaignStage, 10);
+    expect(harness.app.store.readCampaignStage(), 10);
   });
 
   test('doble toque sobre una X la quita sin gastar vida', () async {

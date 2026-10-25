@@ -38,3 +38,23 @@ PuzzleScore scoreFor({
     carrots: safeLives,
   );
 }
+
+/// Etapas que avanza la campaña según el rendimiento.
+///
+/// 1 por resolver; 2 si se resuelve dentro del tiempo objetivo y sin perder
+/// vidas; 3 si además no se usan pistas y se baja del 60 % del objetivo.
+int stageAdvanceFor({
+  required int size,
+  required int seconds,
+  required int lives,
+  required int hintsUsed,
+  int maxLives = 3,
+}) {
+  final target = size * 30;
+  var advance = 1;
+  if (lives >= maxLives && seconds <= target) advance += 1;
+  if (lives >= maxLives && hintsUsed == 0 && seconds <= target * 0.6) {
+    advance += 1;
+  }
+  return advance;
+}

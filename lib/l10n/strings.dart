@@ -60,6 +60,11 @@ class Strings {
   String get tutorialLivesBody => catalan
       ? 'Un conill mal col·locat gasta una vida. Els conills amb contorn són pistes fixes i no es poden traure.'
       : 'Un conejo mal colocado gasta una vida. Los conejos con contorno son pistas fijas y no se pueden quitar.';
+  String get tutorialFastTitle =>
+      catalan ? 'Avança més ràpid' : 'Avanza más rápido';
+  String get tutorialFastBody => catalan
+      ? 'Resoldre sense perdre vides i dins del temps et fa saltar 2 o 3 etapes.'
+      : 'Resolver sin perder vidas y dentro del tiempo te hace saltar 2 o 3 etapas.';
   String get tutorialCarrotsTitle =>
       catalan ? 'Pastanagues' : 'Zanahorias';
   String get tutorialCarrotsBody => catalan
@@ -92,6 +97,9 @@ class Strings {
   String wrongBunny(int remaining) => catalan
       ? 'Conill mal col·locat. Et ${remaining == 1 ? 'queda' : 'queden'} $remaining ${remaining == 1 ? 'vida' : 'vides'}.'
       : 'Conejo mal colocado. Te ${remaining == 1 ? 'queda' : 'quedan'} $remaining ${remaining == 1 ? 'vida' : 'vidas'}.';
+  String fastAdvance(int count) => catalan
+      ? 'Salt ràpid: $count etapes'
+      : 'Salto rápido: $count etapas';
   String get noLivesTitle => catalan ? 'Sense vides' : 'Sin vidas';
   String get noLivesBody =>
       catalan ? 'Has esgotat les tres vides.' : 'Has agotado las tres vidas.';

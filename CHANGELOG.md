@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0 — 2026-10-25
+
+- **Progresión rápida**: cada puzle avanza 1 etapa; si se resuelve dentro del
+  tiempo objetivo (30 s por casilla de lado) y sin perder vidas, avanza 2; y si
+  además no se usan pistas y se baja del 60 % de ese tiempo, avanza 3.
+- El diálogo de victoria muestra el salto rápido conseguido.
+
 ## 0.5.0 — 2026-10-25
 
 - **Revivir con zanahorias**: al quedarse sin vidas se puede gastar 3

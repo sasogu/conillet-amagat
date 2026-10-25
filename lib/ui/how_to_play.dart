@@ -45,6 +45,13 @@ Future<void> showHowToPlay(
                 body: strings.tutorialCarrotsBody,
                 theme: theme,
               ),
+              const SizedBox(height: 16),
+              _HowToRow(
+                icon: Icons.rocket_launch_outlined,
+                title: strings.tutorialFastTitle,
+                body: strings.tutorialFastBody,
+                theme: theme,
+              ),
             ],
           ),
         ),

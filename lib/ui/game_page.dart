@@ -202,6 +202,15 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
           seconds: controller.elapsedSeconds,
           lives: controller.lives,
         );
+        final advance = widget.mode == 'campaign'
+            ? stageAdvanceFor(
+                size: controller.puzzle.size,
+                seconds: controller.elapsedSeconds,
+                lives: controller.lives,
+                hintsUsed: controller.hintsUsed,
+                maxLives: startingLives,
+              )
+            : 1;
         return AlertDialog(
           icon: Center(
             child: BunnyLogo(size: 58, skin: widget.app.skin),
@@ -277,6 +286,42 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                   ],
                 ),
               ),
+              if (advance > 1) ...[
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.tertiaryContainer.withValues(
+                      alpha: 0.7,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.rocket_launch_outlined,
+                        size: 18,
+                        color: theme.colorScheme.onTertiaryContainer,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          strings.fastAdvance(advance),
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: theme.colorScheme.onTertiaryContainer,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -306,7 +351,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
             if (widget.mode == 'campaign')
               FilledButton(
                 onPressed: () =>
-                    _nextStage(dialogContext, widget.levelIndex + 1),
+                    _nextStage(dialogContext, widget.levelIndex + advance),
                 child: Text(strings.next),
               )
             else

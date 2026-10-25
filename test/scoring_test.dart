@@ -46,4 +46,13 @@ void main() {
     expect(score.livesBonus, 0);
     expect(score.points, score.base + score.timeBonus);
   });
+
+  test('el salto de etapa premia rapidez, vidas y ausencia de pistas', () {
+    expect(stageAdvanceFor(size: 6, seconds: 200, lives: 3, hintsUsed: 0), 1);
+    expect(stageAdvanceFor(size: 6, seconds: 120, lives: 3, hintsUsed: 0), 2);
+    expect(stageAdvanceFor(size: 6, seconds: 120, lives: 3, hintsUsed: 1), 2);
+    expect(stageAdvanceFor(size: 6, seconds: 100, lives: 3, hintsUsed: 0), 3);
+    expect(stageAdvanceFor(size: 6, seconds: 100, lives: 2, hintsUsed: 0), 1);
+  });
+
 }

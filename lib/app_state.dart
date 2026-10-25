@@ -166,7 +166,14 @@ class AppState extends ChangeNotifier {
       );
       await store.setCompletedLevels(puzzle.size, completed);
       if (mode == 'campaign') {
-        final next = math.max(campaignStage, levelIndex + 1);
+        final advance = stageAdvanceFor(
+          size: puzzle.size,
+          seconds: seconds,
+          lives: lives,
+          hintsUsed: hintsUsed,
+          maxLives: startingLives,
+        );
+        final next = math.max(campaignStage, levelIndex + advance);
         campaignStage = next;
         await store.writeCampaignStage(next);
       }

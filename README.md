@@ -33,11 +33,11 @@ diagonal.
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.5.0.apk`
+- APK universal firmado: `conillet-amagat-0.6.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.5.0.apk`.
+  `adb install conillet-amagat-0.6.0.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.
@@ -59,6 +59,9 @@ dispositivo.
   etapa de la campaña. Las tres primeras etapas traen dos conejos fijos de
   pista y las tres siguientes uno; se distinguen por un contorno y no se
   pueden quitar.
+- **Progresión rápida**: resolver sin perder vidas y dentro del tiempo objetivo
+  (30 s por casilla de lado) avanza 2 etapas; si además no se usan pistas y se
+  baja del 60 % de ese tiempo, avanza 3.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
 - Al resolver un puzle se suman **puntos** según el tamaño, el tiempo empleado
@@ -72,8 +75,8 @@ dispositivo.
 - Regiones irregulares, desde casillas pequeñas hasta formas alargadas, como
   en los puzles de este género.
 - **Puzle diario** con tamaño rotativo, racha de días y progreso guardado.
-- **Campaña de 399 etapas** de 6×6 a 9×9, con progreso guardado y 9×9
-  infinitos al terminarla.
+- **Campaña de 399 etapas** de 6×6 a 9×9, con progreso guardado, saltos de
+  etapa por rapidez y 9×9 infinitos al terminarla.
 - **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
 - **Puntos y zanahorias**: puntuación por tiempo y vidas conservadas, con
   contadores acumulados en la portada. Las zanahorias sirven para revivir.

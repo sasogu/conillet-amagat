@@ -30,6 +30,10 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
   vidas restantes se convierten en zanahorias y se acumulan en `StatsData`.
 - Revivir cuesta `reviveCost` (3 zanahorias) y devuelve una vida. No cambiar el
   coste sin revisar el equilibrio de la economía.
+- El salto de etapa se calcula solo con `stageAdvanceFor` en
+  `lib/game/scoring.dart`: tiempo objetivo = tamaño × 30 s; +1 etapa extra si
+  se cumple sin perder vidas; +1 más si no se usan pistas y se baja del 60 %.
+  No duplicar estos umbrales en la interfaz.
 - Los aspectos viven en `lib/game/bunny_skin.dart`; el desbloqueo y la selección
   se guardan en `ronron.skins.unlocked` y `ronron.skins.selected`. El blanco
   debe seguir desbloqueado por defecto.
