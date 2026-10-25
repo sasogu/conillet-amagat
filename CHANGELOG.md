@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 — 2026-10-25
+
+- Identificador de la aplicación cambiado a `es.sasogu.conillet`, acorde con el
+  nuevo nombre.
+- Es un paquete distinto de `es.sasogu.ronron`: no comparte progreso con las
+  instalaciones anteriores y puede convivir con ellas.
+
 ## 0.2.0 — 2026-10-25
 
 - La app pasa a llamarse **Conillet amagat**: el gato deja paso a un conejo.

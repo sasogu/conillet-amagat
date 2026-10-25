@@ -25,11 +25,11 @@ diagonal.
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.2.0.apk`
+- APK universal firmado: `conillet-amagat-0.2.1.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.2.0.apk`.
+  `adb install conillet-amagat-0.2.1.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.

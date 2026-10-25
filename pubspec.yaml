@@ -1,7 +1,7 @@
 name: conillet_amagat
 description: "Puzle de lógica de conejos: un conejo por fila, columna y región, sin tocarse."
 publish_to: 'none'
-version: 0.2.0+4
+version: 0.2.1+5
 
 environment:
   sdk: ^3.9.2
