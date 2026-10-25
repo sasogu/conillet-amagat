@@ -24,11 +24,11 @@ cada región, sin que dos gatos se toquen, ni siquiera en diagonal.
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `ronron-0.1.1.apk`
+- APK universal firmado: `ronron-0.1.2.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install ronron-0.1.1.apk`.
+  `adb install ronron-0.1.2.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.

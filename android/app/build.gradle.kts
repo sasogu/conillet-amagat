@@ -29,7 +29,7 @@ android {
         }
     }
 
-    namespace = "es.daizan.ronron"
+    namespace = "es.sasogu.ronron"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "es.daizan.ronron"
+        applicationId = "es.sasogu.ronron"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

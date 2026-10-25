@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 — 2026-10-25
+
+- Identificador de la aplicación cambiado a `es.sasogu.ronron` antes de la
+  publicación en Play Store.
+- Versión de prueba con el nuevo paquete; la 0.1.1 queda como anterior.
+
 ## 0.1.1 — 2026-10-25
 
 - Mejorada la paleta del modo oscuro: regiones más luminosas, saturadas y
