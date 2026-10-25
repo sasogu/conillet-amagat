@@ -120,24 +120,24 @@ class BoardColors {
 
   static const BoardColors dark = BoardColors(
     regions: [
-      Color(0xFF6E4B45),
-      Color(0xFF6B5B34),
-      Color(0xFF41573D),
-      Color(0xFF355660),
-      Color(0xFF4B4569),
-      Color(0xFF6A4353),
-      Color(0xFF574C40),
-      Color(0xFF36554F),
-      Color(0xFF5C4B3A),
-      Color(0xFF404B60),
+      Color(0xFFA9655A), // coral
+      Color(0xFFA98A48), // ámbar
+      Color(0xFF6F8E5E), // salvia
+      Color(0xFF4B8779), // verde azulado
+      Color(0xFF4E7F98), // azul cian
+      Color(0xFF6F78A6), // índigo
+      Color(0xFF896CA1), // violeta
+      Color(0xFFA4617D), // rosa
+      Color(0xFF5C6E8B), // pizarra
+      Color(0xFF8B7960), // arena
     ],
-    cat: Color(0xFFF5E9D0),
-    catEye: Color(0xFF2A2622),
-    cross: Color(0xFFBDB4A6),
-    autoCross: Color(0xFF7C766C),
-    border: Color(0xFF101413),
-    grid: Color(0x14FFFFFF),
-    conflict: Color(0xFFFF7B8A),
+    cat: Color(0xFFF7EBD2),
+    catEye: Color(0xFF221E1A),
+    cross: Color(0xFFE6DCCB),
+    autoCross: Color(0xFF4A453D),
+    border: Color(0xFF0A0D0C),
+    grid: Color(0x1AFFFFFF),
+    conflict: Color(0xFFFF8492),
   );
 
   static BoardColors of(BuildContext context) =>

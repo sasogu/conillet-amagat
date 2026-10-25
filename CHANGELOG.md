@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 — 2026-10-25
+
+- Mejorada la paleta del modo oscuro: regiones más luminosas, saturadas y
+  distinguibles, con un borde más definido.
+- Las X automáticas usan un tono oscuro discreto para no competir con los
+  gatos y las X manuales.
+- Ajustados el color de conflicto y las líneas de la cuadrícula en oscuro.
+
 ## 0.1.0 — 2026-10-25
 
 Primera versión publicada para probar.

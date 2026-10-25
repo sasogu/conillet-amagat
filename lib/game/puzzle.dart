@@ -133,4 +133,3 @@ class Puzzle {
 
 int dailySeed(DateTime date, int size) =>
     stableSeed('ronron-daily-$size-${date.year}-${date.month}-${date.day}');
-

@@ -13,6 +13,9 @@ cada región, sin que dos gatos se toquen, ni siquiera en diagonal.
 <p align="center">
   <img src="docs/screenshots/home-light.png" width="260" alt="Portada en modo claro" />
   <img src="docs/screenshots/game-light.png" width="260" alt="Partida en curso" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/game-dark.png" width="260" alt="Partida en modo oscuro" />
   <img src="docs/screenshots/home-dark.png" width="260" alt="Portada en modo oscuro" />
 </p>
 
@@ -21,11 +24,11 @@ cada región, sin que dos gatos se toquen, ni siquiera en diagonal.
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `ronron-0.1.0.apk`
+- APK universal firmado: `ronron-0.1.1.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install ronron-0.1.0.apk`.
+  `adb install ronron-0.1.1.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.
