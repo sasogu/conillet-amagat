@@ -7,6 +7,7 @@ import '../game/campaign.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
 import 'bunny_art.dart';
+import 'carrot_icon.dart';
 import 'game_page.dart';
 import 'settings_sheet.dart';
 
@@ -102,6 +103,8 @@ class HomePage extends StatelessWidget {
                 _StatsCard(
                   solved: app.stats.solved,
                   streak: app.stats.dailyStreak,
+                  points: app.stats.points,
+                  carrots: app.stats.carrots,
                   strings: strings,
                 ),
                 const SizedBox(height: 26),
@@ -553,41 +556,87 @@ class _StatsCard extends StatelessWidget {
   const _StatsCard({
     required this.solved,
     required this.streak,
+    required this.points,
+    required this.carrots,
     required this.strings,
   });
 
   final int solved;
   final int streak;
+  final int points;
+  final int carrots;
   final Strings strings;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final divider = Container(
+      width: 1,
+      height: 44,
+      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+    );
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        child: Row(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
           children: [
-            Expanded(
-              child: _Stat(
-                value: '$solved',
-                label: strings.solvedStat,
-                icon: Icons.emoji_events_outlined,
-                theme: theme,
+            Row(
+              children: [
+                Expanded(
+                  child: _Stat(
+                    value: Strings.formatNumber(points),
+                    label: strings.points,
+                    icon: Icon(
+                      Icons.stars_rounded,
+                      color: theme.colorScheme.primary,
+                    ),
+                    theme: theme,
+                  ),
+                ),
+                divider,
+                Expanded(
+                  child: _Stat(
+                    value: Strings.formatNumber(carrots),
+                    label: strings.carrots,
+                    icon: const CarrotIcon(size: 24),
+                    theme: theme,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: Divider(
+                height: 1,
+                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.35),
               ),
             ),
-            Container(
-              width: 1,
-              height: 44,
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-            Expanded(
-              child: _Stat(
-                value: '$streak',
-                label: strings.streakStat,
-                icon: Icons.local_fire_department_outlined,
-                theme: theme,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: _Stat(
+                    value: '$solved',
+                    label: strings.solvedStat,
+                    icon: Icon(
+                      Icons.emoji_events_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    theme: theme,
+                  ),
+                ),
+                divider,
+                Expanded(
+                  child: _Stat(
+                    value: '$streak',
+                    label: strings.streakStat,
+                    icon: Icon(
+                      Icons.local_fire_department_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    theme: theme,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -606,14 +655,14 @@ class _Stat extends StatelessWidget {
 
   final String value;
   final String label;
-  final IconData icon;
+  final Widget icon;
   final ThemeData theme;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: theme.colorScheme.primary),
+        icon,
         const SizedBox(height: 6),
         Text(
           value,

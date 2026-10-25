@@ -19,17 +19,21 @@ diagonal.
   <img src="docs/screenshots/game-dark.png" width="260" alt="Partida en modo oscuro" />
   <img src="docs/screenshots/home-dark.png" width="260" alt="Portada en modo oscuro" />
 </p>
+<p align="center">
+  <img src="docs/screenshots/win-light.png" width="260" alt="Puntos y zanahorias al resolver" />
+  <img src="docs/screenshots/win-dark.png" width="260" alt="Puntos y zanahorias al resolver en modo oscuro" />
+</p>
 
 ## Descargar
 
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.3.0.apk`
+- APK universal firmado: `conillet-amagat-0.4.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.3.0.apk`.
+  `adb install conillet-amagat-0.4.0.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.
@@ -53,6 +57,9 @@ dispositivo.
   pueden quitar.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
+- Al resolver un puzle se suman **puntos** según el tamaño, el tiempo empleado
+  y las vidas conservadas. Cada vida sin gastar se convierte en una
+  **zanahoria** para el conejo.
 
 ## Características
 
@@ -64,6 +71,8 @@ dispositivo.
 - **Campaña de 399 etapas** de 6×6 a 9×9, con progreso guardado y 9×9
   infinitos al terminarla.
 - **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
+- **Puntos y zanahorias**: puntuación por tiempo y vidas conservadas, con
+  contadores acumulados en la portada.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.
@@ -99,8 +108,9 @@ lib/
   game/generator.dart      generador de puzles con solución única
   game/solver.dart         solver exacto y solver humano
   game/campaign.dart       etapas, tamaños y conejos de pista
+  game/scoring.dart        puntos y zanahorias por puzle
   game/game_controller.dart  estado de la partida
-  ui/                      portada, tablero, partida y ajustes
+  ui/                      portada, tablero, partida, iconos y ajustes
 assets/puzzles.json        lote verificado de puzles
 tool/                      generación y verificación del lote
 test/                      pruebas de lógica, controlador e interfaz

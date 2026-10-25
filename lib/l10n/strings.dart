@@ -45,6 +45,14 @@ class Strings {
   String get autoCrossShort => catalan ? 'X auto' : 'X auto';
   String get bunnies => catalan ? 'Conills' : 'Conejos';
   String get lives => catalan ? 'Vides' : 'Vidas';
+  String get points => catalan ? 'Punts' : 'Puntos';
+  String get carrots => catalan ? 'Pastanagues' : 'Zanahorias';
+  String carrotsFed(int count) => catalan
+      ? '$count ${count == 1 ? 'pastanaga' : 'pastanagues'} per al conill'
+      : '$count ${count == 1 ? 'zanahoria' : 'zanahorias'} para el conejo';
+  String scoreBreakdown(int base, int timeBonus, int livesBonus) => catalan
+      ? 'Base ${formatNumber(base)} · Temps ${formatNumber(timeBonus)} · Vides ${formatNumber(livesBonus)}'
+      : 'Base ${formatNumber(base)} · Tiempo ${formatNumber(timeBonus)} · Vidas ${formatNumber(livesBonus)}';
   String wrongBunny(int remaining) => catalan
       ? 'Conill mal col·locat. Et ${remaining == 1 ? 'queda' : 'queden'} $remaining ${remaining == 1 ? 'vida' : 'vides'}.'
       : 'Conejo mal colocado. Te ${remaining == 1 ? 'queda' : 'quedan'} $remaining ${remaining == 1 ? 'vida' : 'vidas'}.';
@@ -149,6 +157,16 @@ class Strings {
     if (!catalan) return '$weekday, ${date.day} de $month';
     final join = 'aeiou'.contains(month[0]) ? "d'" : 'de ';
     return '$weekday, ${date.day} $join$month';
+  }
+
+  static String formatNumber(int value) {
+    final digits = value.abs().toString();
+    final buffer = StringBuffer();
+    for (var index = 0; index < digits.length; index++) {
+      if (index > 0 && (digits.length - index) % 3 == 0) buffer.write('.');
+      buffer.write(digits[index]);
+    }
+    return value < 0 ? '-$buffer' : buffer.toString();
   }
 
   static String formatDuration(int totalSeconds) {

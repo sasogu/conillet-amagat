@@ -53,6 +53,8 @@ class StatsData {
   int dailyStreak;
   String? lastDaily;
   int hintsUsed;
+  int points;
+  int carrots;
 
   StatsData({
     this.solved = 0,
@@ -60,6 +62,8 @@ class StatsData {
     this.dailyStreak = 0,
     this.lastDaily,
     this.hintsUsed = 0,
+    this.points = 0,
+    this.carrots = 0,
   }) : solvedBySize = solvedBySize ?? {};
 
   Map<String, Object?> toJson() => {
@@ -70,6 +74,8 @@ class StatsData {
     'dailyStreak': dailyStreak,
     'lastDaily': lastDaily,
     'hintsUsed': hintsUsed,
+    'points': points,
+    'carrots': carrots,
   };
 
   factory StatsData.fromJson(Map<String, Object?> json) {
@@ -87,6 +93,8 @@ class StatsData {
       dailyStreak: (json['dailyStreak'] as num?)?.toInt() ?? 0,
       lastDaily: json['lastDaily'] as String?,
       hintsUsed: (json['hintsUsed'] as num?)?.toInt() ?? 0,
+      points: (json['points'] as num?)?.toInt() ?? 0,
+      carrots: (json['carrots'] as num?)?.toInt() ?? 0,
     );
   }
 }

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.0 — 2026-10-25
+
+- **Puntuación por puzle resuelto**: base según el tamaño, bonus por resolver
+  rápido y bonus por cada vida conservada.
+- Las **vidas no consumidas se convierten en zanahorias** para el conejo. Los
+  puntos y las zanahorias se acumulan en las estadísticas.
+- El diálogo de victoria muestra los puntos, el desglose (base, tiempo y
+  vidas), el tiempo, las pistas y las zanahorias conseguidas.
+- Nuevo contador de puntos y zanahorias en la portada.
+- El conejo pasa a ser blanco, con contorno para destacar sobre las casillas;
+  también se ha actualizado el icono de la aplicación.
+
 ## 0.3.0 — 2026-10-25
 
 - Nueva **progresión por etapas**: una secuencia lineal de 399 etapas que va de

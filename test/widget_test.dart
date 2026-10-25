@@ -128,6 +128,60 @@ void main() {
     await tester.pump();
   });
 
+  testWidgets('resolver una etapa suma puntos y zanahorias', (tester) async {
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final app = await createApp();
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('campaign-play')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+
+    final puzzle = app.repository.levelPuzzle(6, 1);
+    final given = puzzle.solution.take(2).toSet();
+    final rect = tester.getRect(find.byType(BoardView));
+    final cellSize = rect.width / puzzle.size;
+
+    for (final cell in puzzle.solution.where((cell) => !given.contains(cell))) {
+      final point =
+          rect.topLeft +
+          Offset(
+            (cell % puzzle.size + 0.5) * cellSize,
+            (cell ~/ puzzle.size + 0.5) * cellSize,
+          );
+      await tester.tapAt(point);
+      await tester.pump(const Duration(milliseconds: 60));
+      await tester.tapAt(point);
+      await tester.pump(const Duration(milliseconds: 450));
+    }
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    final dialog = find.byType(AlertDialog);
+    expect(dialog, findsOneWidget);
+    expect(find.text('¡Puzle resuelto!'), findsOneWidget);
+    expect(
+      find.descendant(of: dialog, matching: find.text('Puntos')),
+      findsOneWidget,
+    );
+    expect(find.text('3 zanahorias para el conejo'), findsOneWidget);
+    expect(
+      find.descendant(of: dialog, matching: find.textContaining('+')),
+      findsOneWidget,
+    );
+
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(app.stats.points, greaterThan(0));
+    expect(app.stats.carrots, 3);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
   testWidgets('el tablero distingue un toque de un doble toque', (
     tester,
   ) async {

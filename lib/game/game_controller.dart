@@ -258,6 +258,7 @@ class GameController extends ChangeNotifier {
         levelIndex: levelIndex,
         hintsUsed: hintsUsed,
         seconds: elapsedSeconds,
+        lives: lives,
       ),
     );
   }

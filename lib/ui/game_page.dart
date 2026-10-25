@@ -5,9 +5,11 @@ import '../data/game_store.dart';
 import '../game/campaign.dart';
 import '../game/game_controller.dart';
 import '../game/puzzle.dart';
+import '../game/scoring.dart';
 import '../l10n/strings.dart';
 import 'board_view.dart';
 import 'bunny_art.dart';
+import 'carrot_icon.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({
@@ -160,14 +162,85 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       barrierDismissible: false,
       builder: (dialogContext) {
         final theme = Theme.of(dialogContext);
+        final score = scoreFor(
+          puzzle: controller.puzzle,
+          seconds: controller.elapsedSeconds,
+          lives: controller.lives,
+        );
         return AlertDialog(
-          icon: const BunnyLogo(size: 58),
+          icon: const Center(child: BunnyLogo(size: 58)),
           title: Text(strings.winTitle, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(strings.winBody, textAlign: TextAlign.center),
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
+              Text(
+                '+${Strings.formatNumber(score.points)}',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Text(
+                strings.points,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                strings.scoreBreakdown(
+                  score.base,
+                  score.timeBonus,
+                  score.livesBonus,
+                ),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withValues(
+                    alpha: 0.65,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (score.carrots > 0) ...[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var index = 0; index < score.carrots; index++)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 1),
+                              child: CarrotIcon(size: 20),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+                    Text(
+                      strings.carrotsFed(score.carrots),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -175,13 +248,6 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                     icon: Icons.timer_outlined,
                     label: strings.time,
                     value: Strings.formatDuration(controller.elapsedSeconds),
-                    theme: theme,
-                  ),
-                  _Result(
-                    icon: Icons.cruelty_free,
-                    label: strings.bunnies,
-                    value:
-                        '${controller.puzzle.size}/${controller.puzzle.size}',
                     theme: theme,
                   ),
                   _Result(

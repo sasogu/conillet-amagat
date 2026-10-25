@@ -171,7 +171,7 @@ class _BoardPainter extends CustomPainter {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = math.max(1.1, cellSize * 0.028)
-            ..color = colors.bunny.withValues(alpha: 0.45),
+            ..color = colors.bunnyEye.withValues(alpha: 0.55),
         );
       }
     }
@@ -193,7 +193,8 @@ class _BoardPainter extends CustomPainter {
           cellSize * 0.245,
           body: colors.bunny,
           eye: colors.bunnyEye,
-          innerEar: colors.bunnyEye.withValues(alpha: 0.35),
+          outline: colors.bunnyEye.withValues(alpha: 0.55),
+          innerEar: const Color(0xFFE7A79E).withValues(alpha: 0.8),
         );
         if (conflicts.contains(cell)) {
           canvas.drawRRect(

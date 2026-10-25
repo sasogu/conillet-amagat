@@ -253,6 +253,8 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 60));
     expect(harness.app.stats.solved, 1);
     expect(harness.app.stats.solvedBySize[6], 1);
+    expect(harness.app.stats.points, greaterThan(0));
+    expect(harness.app.stats.carrots, 3);
     expect(harness.app.completedLevels(6), 3);
     expect(harness.app.savedGame, isNull);
   });

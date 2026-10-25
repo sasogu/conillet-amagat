@@ -107,8 +107,8 @@ class BoardColors {
       Color(0xFFEAD6BE),
       Color(0xFFD9E2F0),
     ],
-    bunny: Color(0xFF2F2A26),
-    bunnyEye: Color(0xFFFFF8EA),
+    bunny: Color(0xFFFFF6E9),
+    bunnyEye: Color(0xFF3B322C),
     cross: Color(0xFF8A7F72),
     autoCross: Color(0xFFB4A99C),
     gap: Color(0xFFFFFCF6),
@@ -128,7 +128,7 @@ class BoardColors {
       Color(0xFF5C6E8B), // pizarra
       Color(0xFF8B7960), // arena
     ],
-    bunny: Color(0xFFF7EBD2),
+    bunny: Color(0xFFFFFBF2),
     bunnyEye: Color(0xFF221E1A),
     cross: Color(0xFFE6DCCB),
     autoCross: Color(0xFF4A453D),

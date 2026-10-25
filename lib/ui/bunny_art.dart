@@ -17,6 +17,12 @@ void paintBunnyFace(
     radius: radius,
   );
   final bodyPaint = Paint()..color = body;
+  final outlinePaint = outline == null
+      ? null
+      : (Paint()
+          ..color = outline
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = radius * 0.07);
 
   for (final side in const [-1.0, 1.0]) {
     canvas.save();
@@ -41,6 +47,16 @@ void paintBunnyFace(
           height: radius * 1.0,
         ),
         Paint()..color = innerEar,
+      );
+    }
+    if (outlinePaint != null) {
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: radius * 0.54,
+          height: radius * 1.46,
+        ),
+        outlinePaint,
       );
     }
     canvas.restore();
@@ -81,11 +97,7 @@ void paintBunnyFace(
     Paint()..color = const Color(0xFFFFF8EA),
   );
 
-  if (outline != null) {
-    final outlinePaint = Paint()
-      ..color = outline
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = radius * 0.16;
+  if (outlinePaint != null) {
     canvas.drawCircle(head.center, radius, outlinePaint);
   }
 }
@@ -150,8 +162,9 @@ class _BunnyLogoPainter extends CustomPainter {
       canvas,
       Offset(size.width / 2, size.height * 0.57),
       size.width * 0.22,
-      body: const Color(0xFF2F2A26),
-      eye: const Color(0xFFFFF8EA),
+      body: const Color(0xFFFFF8EC),
+      eye: const Color(0xFF2F2A26),
+      outline: const Color(0x992F2A26),
       innerEar: const Color(0xFFE7A79E),
     );
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'data/game_store.dart';
 import 'data/puzzle_repository.dart';
 import 'game/puzzle.dart';
+import 'game/scoring.dart';
 import 'l10n/strings.dart';
 
 class AppState extends ChangeNotifier {
@@ -82,6 +83,7 @@ class AppState extends ChangeNotifier {
     required int levelIndex,
     required int hintsUsed,
     required int seconds,
+    int lives = 0,
     DateTime? now,
   }) async {
     final date = now ?? DateTime.now();
@@ -92,6 +94,9 @@ class AppState extends ChangeNotifier {
       ifAbsent: () => 1,
     );
     stats.hintsUsed += hintsUsed;
+    final score = scoreFor(puzzle: puzzle, seconds: seconds, lives: lives);
+    stats.points += score.points;
+    stats.carrots += score.carrots;
 
     if (mode == 'daily') {
       final today = _dayKey(date);

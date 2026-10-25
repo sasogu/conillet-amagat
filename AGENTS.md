@@ -24,6 +24,9 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
   `ronron.campaign.stage`.
 - Los conejos de pista de las primeras etapas son celdas fijas: no se pueden
   quitar ni deshacer, y se guardan en `SavedGame.given`.
+- La puntuación se calcula solo en `lib/game/scoring.dart` (base por tamaño,
+  bonus por tiempo y por vidas). No duplicar la fórmula en la interfaz. Las
+  vidas restantes se convierten en zanahorias y se acumulan en `StatsData`.
 - Cualquier puzle nuevo debe tener **solución única**, regiones conexas y un
   conejo por fila, columna y región. Validarlo con las pruebas y con
   `dart run tool/verify_pool.dart`.
