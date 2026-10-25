@@ -7,6 +7,8 @@ regiones de color. Hay que esconder exactamente un conejo en cada fila, en cada
 columna y en cada región, sin que dos conejos se toquen, ni siquiera en
 diagonal.
 
+**Jugar en el navegador:** https://sasogu.github.io/ronron/
+
 <p align="center">
   <img src="docs/icon.png" width="120" alt="Icono de Conillet amagat" />
 </p>
@@ -27,6 +29,15 @@ diagonal.
   <img src="docs/screenshots/tutorial-light.png" width="260" alt="Tutorial de la primera vez" />
   <img src="docs/screenshots/skins-light.png" width="260" alt="Aspectos del conejo" />
 </p>
+
+## Web
+
+La versión web está en **https://sasogu.github.io/ronron/** y se puede instalar
+como PWA. El progreso se guarda en el navegador del dispositivo y el juego
+funciona sin conexión tras la primera carga.
+
+El despliegue es automático al hacer push a `main` mediante
+`.github/workflows/web.yml` (GitHub Pages, ruta `/ronron/`).
 
 ## Descargar
 
@@ -122,6 +133,7 @@ lib/
   game/game_controller.dart  estado de la partida
   ui/                      portada, tablero, partida, tutorial, aspectos y ajustes
 assets/puzzles.json        lote verificado de puzles
+web/                       PWA: manifiesto, iconos y pantalla de carga
 tool/                      generación y verificación del lote
 test/                      pruebas de lógica, controlador e interfaz
 ```

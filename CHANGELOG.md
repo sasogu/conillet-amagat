@@ -1,5 +1,12 @@
 # Changelog
 
+## Web — 2026-10-25
+
+- Versión web publicada en GitHub Pages: https://sasogu.github.io/ronron/
+- PWA instalable, con progreso local del navegador y funcionamiento sin
+  conexión tras la primera carga.
+- Despliegue automático con GitHub Actions al hacer push a `main`.
+
 ## 0.6.0 — 2026-10-25
 
 - **Progresión rápida**: cada puzle avanza 1 etapa; si se resuelve dentro del

@@ -54,6 +54,17 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
   castellano y valenciano.
 - No comentar el código salvo que sea imprescindible.
 
+## Web
+
+- La web se publica en https://sasogu.github.io/ronron/ con GitHub Pages.
+- Workflow: `.github/workflows/web.yml` (Flutter 3.35.7 y `--base-href`
+  dinámico con el nombre del repositorio). No subir `build/web`.
+- Para probar en local: `flutter build web --release --base-href /ronron/` y
+  servir `build/web` bajo una carpeta `ronron/`.
+- `web/manifest.json`, `web/index.html` y los iconos son parte del producto;
+  el icono web debe coincidir con `docs/icon.png`.
+- La web guarda el progreso en `localStorage`; es independiente del APK.
+
 ## Secretos
 
 - `android/key.properties` y `android/app/*.jks` están en `.gitignore`.
