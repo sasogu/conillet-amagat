@@ -99,6 +99,7 @@ class SavedGame {
   final String mode;
   final int levelIndex;
   final int lives;
+  final List<int> given;
 
   SavedGame({
     required this.puzzle,
@@ -108,6 +109,7 @@ class SavedGame {
     required this.mode,
     required this.levelIndex,
     this.lives = startingLives,
+    this.given = const [],
   });
 
   Map<String, Object?> toJson() => {
@@ -118,6 +120,7 @@ class SavedGame {
     'mode': mode,
     'level': levelIndex,
     'lives': lives,
+    'given': given,
   };
 
   factory SavedGame.fromJson(Map<String, Object?> json) => SavedGame(
@@ -130,6 +133,9 @@ class SavedGame {
     mode: json['mode'] as String? ?? 'level',
     levelIndex: (json['level'] as num?)?.toInt() ?? 1,
     lives: (json['lives'] as num?)?.toInt() ?? startingLives,
+    given: ((json['given'] as List?) ?? const [])
+        .map((value) => (value as num).toInt())
+        .toList(),
   );
 }
 
@@ -142,6 +148,7 @@ class GameStore {
   static const _statsKey = 'ronron.stats.v1';
   static const _gameKey = 'ronron.game.v1';
   static const _levelKeyPrefix = 'ronron.level.';
+  static const _stageKey = 'ronron.campaign.stage';
 
   SettingsData readSettings() {
     final raw = _prefs.getString(_settingsKey);
@@ -197,4 +204,9 @@ class GameStore {
 
   Future<void> setCompletedLevels(int size, int value) =>
       _prefs.setInt('$_levelKeyPrefix$size', value);
+
+  int readCampaignStage() => _prefs.getInt(_stageKey) ?? 1;
+
+  Future<void> writeCampaignStage(int stage) =>
+      _prefs.setInt(_stageKey, stage);
 }

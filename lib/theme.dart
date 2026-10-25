@@ -82,9 +82,7 @@ class BoardColors {
     required this.bunnyEye,
     required this.cross,
     required this.autoCross,
-    required this.border,
-    required this.grid,
-    required this.shadow,
+    required this.gap,
     required this.conflict,
   });
 
@@ -93,9 +91,7 @@ class BoardColors {
   final Color bunnyEye;
   final Color cross;
   final Color autoCross;
-  final Color border;
-  final Color grid;
-  final Color shadow;
+  final Color gap;
   final Color conflict;
 
   static const BoardColors light = BoardColors(
@@ -115,9 +111,7 @@ class BoardColors {
     bunnyEye: Color(0xFFFFF8EA),
     cross: Color(0xFF8A7F72),
     autoCross: Color(0xFFB4A99C),
-    border: Color(0xFFFFFCF6),
-    grid: Color(0x14000000),
-    shadow: Color(0x2E6B5A45),
+    gap: Color(0xFFFFFCF6),
     conflict: Color(0xFFD1495B),
   );
 
@@ -138,9 +132,7 @@ class BoardColors {
     bunnyEye: Color(0xFF221E1A),
     cross: Color(0xFFE6DCCB),
     autoCross: Color(0xFF4A453D),
-    border: Color(0xFF0A0D0C),
-    grid: Color(0x1AFFFFFF),
-    shadow: Color(0x66000000),
+    gap: Color(0xFF0A0D0C),
     conflict: Color(0xFFFF8492),
   );
 

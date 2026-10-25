@@ -14,6 +14,7 @@ class BoardView extends StatefulWidget {
     required this.marks,
     required this.blocked,
     required this.conflicts,
+    this.given = const {},
     required this.onTap,
     required this.onDoubleTap,
     required this.onDragMark,
@@ -25,6 +26,7 @@ class BoardView extends StatefulWidget {
   final List<CellMark> marks;
   final Set<int> blocked;
   final Set<int> conflicts;
+  final Set<int> given;
   final ValueChanged<int> onTap;
   final ValueChanged<int> onDoubleTap;
   final ValueChanged<int> onDragMark;
@@ -67,6 +69,7 @@ class _BoardViewState extends State<BoardView> {
                 marks: widget.marks,
                 blocked: widget.blocked,
                 conflicts: widget.conflicts,
+                given: widget.given,
                 colors: colors,
               ),
             ),
@@ -120,6 +123,7 @@ class _BoardPainter extends CustomPainter {
     required this.marks,
     required this.blocked,
     required this.conflicts,
+    required this.given,
     required this.colors,
   });
 
@@ -127,12 +131,17 @@ class _BoardPainter extends CustomPainter {
   final List<CellMark> marks;
   final Set<int> blocked;
   final Set<int> conflicts;
+  final Set<int> given;
   final BoardColors colors;
 
   @override
   void paint(Canvas canvas, Size size) {
     final n = puzzle.size;
     final cellSize = size.width / n;
+    final gap = math.max(1.6, cellSize * 0.04);
+    final tileRadius = Radius.circular(cellSize * 0.14);
+
+    canvas.drawRect(Offset.zero & size, Paint()..color = colors.gap);
 
     for (var cell = 0; cell < puzzle.cellCount; cell++) {
       final row = puzzle.rowOf(cell);
@@ -142,67 +151,30 @@ class _BoardPainter extends CustomPainter {
         row * cellSize,
         cellSize,
         cellSize,
-      );
-      canvas.drawRect(
-        rect,
+      ).deflate(gap / 2);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, tileRadius),
         Paint()..color = colors.regionColor(puzzle.regions[cell]),
       );
       if (conflicts.contains(cell)) {
-        canvas.drawRect(
-          rect.deflate(1),
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(rect, tileRadius),
           Paint()..color = colors.conflict.withValues(alpha: 0.20),
         );
       }
+      if (given.contains(cell)) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            rect.deflate(math.max(1.2, cellSize * 0.035)),
+            tileRadius,
+          ),
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = math.max(1.1, cellSize * 0.028)
+            ..color = colors.bunny.withValues(alpha: 0.45),
+        );
+      }
     }
-
-    final lightPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: 0.07),
-          Colors.white.withValues(alpha: 0.0),
-          Colors.black.withValues(alpha: 0.03),
-        ],
-        stops: const [0.0, 0.55, 1.0],
-      ).createShader(Offset.zero & size);
-    canvas.drawRect(Offset.zero & size, lightPaint);
-
-    final gridPaint = Paint()
-      ..color = colors.grid
-      ..strokeWidth = 0.7;
-    for (var index = 1; index < n; index++) {
-      final offset = index * cellSize;
-      canvas.drawLine(
-        Offset(offset, 0),
-        Offset(offset, size.height),
-        gridPaint,
-      );
-      canvas.drawLine(Offset(0, offset), Offset(size.width, offset), gridPaint);
-    }
-
-    final borderWidth = math.max(2.5, cellSize * 0.075);
-    final borderPaint = Paint()
-      ..color = colors.border
-      ..strokeWidth = borderWidth
-      ..strokeCap = StrokeCap.square;
-    final borderShadow = Paint()
-      ..color = colors.shadow
-      ..strokeWidth = borderWidth
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, borderWidth * 1.1);
-    _paintRegionBorders(canvas, size, cellSize, borderShadow);
-    _paintRegionBorders(canvas, size, cellSize, borderPaint);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        (Offset.zero & size).deflate(borderWidth * 0.4),
-        Radius.circular(math.max(14, size.width * 0.035)),
-      ),
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2
-        ..color = colors.border.withValues(alpha: 0.55),
-    );
 
     for (var cell = 0; cell < puzzle.cellCount; cell++) {
       final row = puzzle.rowOf(cell);
@@ -226,8 +198,8 @@ class _BoardPainter extends CustomPainter {
         if (conflicts.contains(cell)) {
           canvas.drawRRect(
             RRect.fromRectAndRadius(
-              rect.deflate(cellSize * 0.06),
-              Radius.circular(cellSize * 0.18),
+              rect.deflate(cellSize * 0.12),
+              tileRadius,
             ),
             Paint()
               ..style = PaintingStyle.stroke
@@ -239,36 +211,6 @@ class _BoardPainter extends CustomPainter {
         _paintCross(canvas, rect, colors.cross, cellSize, strong: true);
       } else if (blocked.contains(cell)) {
         _paintCross(canvas, rect, colors.autoCross, cellSize, strong: false);
-      }
-    }
-  }
-
-  void _paintRegionBorders(
-    Canvas canvas,
-    Size size,
-    double cellSize,
-    Paint paint,
-  ) {
-    final n = puzzle.size;
-    for (var cell = 0; cell < puzzle.cellCount; cell++) {
-      final row = puzzle.rowOf(cell);
-      final col = puzzle.colOf(cell);
-      final region = puzzle.regions[cell];
-      final left = col * cellSize;
-      final top = row * cellSize;
-      final right = left + cellSize;
-      final bottom = top + cellSize;
-      if (row == 0 || puzzle.regions[cell - n] != region) {
-        canvas.drawLine(Offset(left, top), Offset(right, top), paint);
-      }
-      if (col == 0 || puzzle.regions[cell - 1] != region) {
-        canvas.drawLine(Offset(left, top), Offset(left, bottom), paint);
-      }
-      if (row == n - 1) {
-        canvas.drawLine(Offset(left, bottom), Offset(right, bottom), paint);
-      }
-      if (col == n - 1) {
-        canvas.drawLine(Offset(right, top), Offset(right, bottom), paint);
       }
     }
   }

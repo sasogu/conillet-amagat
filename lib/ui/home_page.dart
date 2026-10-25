@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app_info.dart';
 import '../app_state.dart';
 import '../data/game_store.dart';
+import '../game/campaign.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
 import 'bunny_art.dart';
@@ -32,6 +33,16 @@ class HomePage extends StatelessWidget {
     app.reloadFromStore();
   }
 
+  void _openStage(BuildContext context, CampaignStage stage) {
+    final app = AppScope.of(context);
+    _openGame(
+      context,
+      puzzle: app.repository.levelPuzzle(stage.size, stage.level),
+      mode: 'campaign',
+      levelIndex: stage.number,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final app = AppScope.of(context);
@@ -40,6 +51,8 @@ class HomePage extends StatelessWidget {
     final now = DateTime.now();
     final daily = app.repository.dailyPuzzle(now);
     final saved = app.savedGame;
+    final stage = campaignStageFor(app.repository, app.campaignStage);
+    final campaignPuzzle = app.repository.levelPuzzle(stage.size, stage.level);
 
     return Scaffold(
       body: SafeArea(
@@ -64,6 +77,14 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                 ],
+                _CampaignCard(
+                  key: const ValueKey('campaign-card'),
+                  stage: stage,
+                  puzzle: campaignPuzzle,
+                  strings: strings,
+                  onTap: () => _openStage(context, stage),
+                ),
+                const SizedBox(height: 14),
                 _DailyCard(
                   key: const ValueKey('daily-card'),
                   puzzle: daily,
@@ -76,52 +97,6 @@ class HomePage extends StatelessWidget {
                     mode: 'daily',
                     levelIndex: AppState.dateKey(now),
                   ),
-                ),
-                const SizedBox(height: 26),
-                Row(
-                  children: [
-                    Text(
-                      strings.levelsTitle,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${strings.sizeLabel(6)} – ${strings.sizeLabel(supportedSizes.last)}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.42,
-                  children: [
-                    for (final size in supportedSizes)
-                      _LevelCard(
-                        key: ValueKey('level-$size'),
-                        size: size,
-                        level: app.levelFor(size),
-                        solved: app.stats.solvedBySize[size] ?? 0,
-                        strings: strings,
-                        onTap: () {
-                          final level = app.levelFor(size);
-                          _openGame(
-                            context,
-                            puzzle: app.repository.levelPuzzle(size, level),
-                            mode: 'level',
-                            levelIndex: level,
-                          );
-                        },
-                      ),
-                  ],
                 ),
                 const SizedBox(height: 26),
                 _StatsCard(
@@ -216,7 +191,8 @@ class _ContinueCard extends StatelessWidget {
     final bunnies = saved.marks.where((mark) => mark == CellMark.bunny.index).length;
     final subtitle = saved.mode == 'daily'
         ? '${strings.dailyTitle} · ${strings.sizeLabel(saved.puzzle.size)}'
-        : '${strings.levelLabel(saved.levelIndex)} · ${strings.sizeLabel(saved.puzzle.size)}';
+        : '${strings.stageLabel(saved.levelIndex)} · '
+              '${strings.sizeLabel(saved.puzzle.size)}';
 
     return Card(
       child: InkWell(
@@ -270,6 +246,132 @@ class _ContinueCard extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CampaignCard extends StatelessWidget {
+  const _CampaignCard({
+    super.key,
+    required this.stage,
+    required this.puzzle,
+    required this.strings,
+    required this.onTap,
+  });
+
+  final CampaignStage stage;
+  final Puzzle puzzle;
+  final Strings strings;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final progressLabel = stage.endless
+        ? strings.allStagesDone
+        : strings.stageProgress(
+            stage.completed.clamp(0, stage.totalStages),
+            stage.totalStages,
+          );
+
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.flag_rounded,
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          strings.campaignTitle,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          strings.stageLabel(stage.number),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  _Pill(
+                    label: strings.sizeLabel(puzzle.size),
+                    foreground: scheme.primary,
+                  ),
+                  _Pill(
+                    label: strings.difficulty(puzzle.difficulty),
+                    foreground: scheme.primary,
+                  ),
+                  if (stage.givenBunnies > 0)
+                    _Pill(
+                      label: strings.givenBunnies(stage.givenBunnies),
+                      foreground: scheme.primary,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: LinearProgressIndicator(
+                  value: stage.progress,
+                  minHeight: 8,
+                  backgroundColor: scheme.surfaceContainerHighest,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                progressLabel,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  key: const ValueKey('campaign-play'),
+                  onPressed: onTap,
+                  icon: const Icon(Icons.play_arrow_rounded),
+                  label: Text(strings.playStage),
+                ),
               ),
             ],
           ),
@@ -441,119 +543,6 @@ class _Pill extends StatelessWidget {
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: foreground,
           fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _LevelCard extends StatelessWidget {
-  const _LevelCard({
-    super.key,
-    required this.size,
-    required this.level,
-    required this.solved,
-    required this.strings,
-    required this.onTap,
-  });
-
-  final int size;
-  final int level;
-  final int solved;
-  final Strings strings;
-  final VoidCallback onTap;
-
-  static const _accents = {
-    6: Color(0xFF5C8D6E),
-    7: Color(0xFFB98A3E),
-    8: Color(0xFF4E7E9C),
-    9: Color(0xFF9C5D6E),
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final accent = _accents[size] ?? theme.colorScheme.primary;
-
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: accent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    strings.sizeLabel(size),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const Spacer(),
-                  Icon(
-                    Icons.chevron_right,
-                    size: 20,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                strings.levelLabel(level),
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Text(
-                    strings.difficulty(
-                      size <= 6
-                          ? Difficulty.easy
-                          : size == 7
-                          ? Difficulty.medium
-                          : size == 8
-                          ? Difficulty.hard
-                          : Difficulty.expert,
-                    ),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (solved > 0) ...[
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 13,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      '$solved',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

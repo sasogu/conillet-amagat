@@ -18,9 +18,16 @@ class Strings {
   String get continueTitle =>
       catalan ? 'Continua la partida' : 'Continuar partida';
   String get savedGame => catalan ? 'Partida guardada' : 'Partida guardada';
-  String get levelsTitle => catalan ? 'Nivells' : 'Niveles';
-  String get level => catalan ? 'Nivell' : 'Nivel';
-  String levelLabel(int number) => '$level $number';
+  String get campaignTitle => catalan ? 'La teva etapa' : 'Tu etapa';
+  String stageLabel(int number) => catalan ? 'Etapa $number' : 'Etapa $number';
+  String stageProgress(int completed, int total) => catalan
+      ? '$completed de $total completades'
+      : '$completed de $total completadas';
+  String givenBunnies(int count) => catalan
+      ? '$count ${count == 1 ? 'conill' : 'conills'} de pista'
+      : '$count ${count == 1 ? 'conejo' : 'conejos'} de pista';
+  String get allStagesDone =>
+      catalan ? 'Totes les etapes completades' : 'Todas las etapas completadas';
   String get settings => catalan ? 'Ajustos' : 'Ajustes';
   String get close => catalan ? 'Tanca' : 'Cerrar';
   String get cancel => catalan ? 'Cancel·la' : 'Cancelar';
@@ -57,7 +64,7 @@ class Strings {
       : 'Has colocado todos los conejos.';
   String get next => catalan ? 'Següent' : 'Siguiente';
   String get home => catalan ? 'Inici' : 'Inicio';
-  String get playLevel => catalan ? 'Juga un nivell' : 'Jugar un nivel';
+  String get playStage => catalan ? 'Juga una etapa' : 'Jugar etapa';
 
   String get solvedStat => catalan ? 'Resolts' : 'Resueltos';
   String get streakStat => catalan ? 'Ratxa diària' : 'Racha diaria';
@@ -142,11 +149,6 @@ class Strings {
     if (!catalan) return '$weekday, ${date.day} de $month';
     final join = 'aeiou'.contains(month[0]) ? "d'" : 'de ';
     return '$weekday, ${date.day} $join$month';
-  }
-
-  String modeLabel(String mode, int levelIndex) {
-    if (mode == 'daily') return dailyTitle;
-    return levelLabel(levelIndex);
   }
 
   static String formatDuration(int totalSeconds) {

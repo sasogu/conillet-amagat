@@ -21,7 +21,7 @@ Future<AppState> createApp() async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('la portada carga y abre un nivel', (tester) async {
+  testWidgets('la portada carga y abre la etapa actual', (tester) async {
     tester.view.physicalSize = const Size(430, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -31,18 +31,14 @@ void main() {
     await tester.pump();
     expect(find.text('Conillet amagat'), findsOneWidget);
     expect(find.text('Puzle diario'), findsOneWidget);
+    expect(find.text('Tu etapa'), findsOneWidget);
 
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('level-6')),
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.byKey(const ValueKey('level-6')));
+    await tester.tap(find.byKey(const ValueKey('campaign-play')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 450));
 
     expect(find.byType(BoardView), findsOneWidget);
-    expect(find.text('Nivel 1'), findsOneWidget);
+    expect(find.text('Etapa 1'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();
@@ -68,7 +64,7 @@ void main() {
 
     await tester.tap(find.text('Tanca'));
     await tester.pumpAndSettle();
-    expect(find.text('Nivells'), findsOneWidget);
+    expect(find.text('La teva etapa'), findsOneWidget);
   });
 
   testWidgets('un fallo descuenta una vida y sin vidas pide reiniciar', (
@@ -82,12 +78,7 @@ void main() {
     await tester.pumpWidget(ConilletAmagatApp(app: app));
     await tester.pump();
 
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('level-6')),
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.byKey(const ValueKey('level-6')));
+    await tester.tap(find.byKey(const ValueKey('campaign-play')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 450));
 

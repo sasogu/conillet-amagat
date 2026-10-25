@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:conillet_amagat/app_state.dart';
 import 'package:conillet_amagat/data/game_store.dart';
 import 'package:conillet_amagat/data/puzzle_repository.dart';
+import 'package:conillet_amagat/game/campaign.dart';
 import 'package:conillet_amagat/game/game_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -139,6 +140,90 @@ void main() {
     expect(controller.lives, startingLives);
     expect(controller.failed, isFalse);
     expect(controller.marks.every((mark) => mark == CellMark.none), isTrue);
+  });
+
+  test('los conejos de pista están fijos y no gastan vidas', () async {
+    final harness = await createHarness();
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+
+    final given = givenCellsFor(controller.puzzle, 2).toList();
+    final withGiven = GameController(
+      puzzle: controller.puzzle,
+      app: harness.app,
+      mode: 'campaign',
+      levelIndex: 1,
+      given: given,
+    );
+    addTearDown(withGiven.dispose);
+
+    expect(withGiven.givenCells, given.toSet());
+    for (final cell in given) {
+      expect(withGiven.marks[cell], CellMark.bunny);
+    }
+
+    expect(withGiven.handleDoubleTap(given.first), DoubleTapResult.none);
+    withGiven.handleTap(given.first);
+    withGiven.handleDrag(given.first);
+    expect(withGiven.marks[given.first], CellMark.bunny);
+    expect(withGiven.lives, startingLives);
+
+    withGiven.handleTap(0);
+    withGiven.reset();
+    for (final cell in given) {
+      expect(withGiven.marks[cell], CellMark.bunny);
+    }
+    expect(withGiven.lives, startingLives);
+  });
+
+  test('la partida guardada conserva los conejos de pista', () async {
+    final harness = await createHarness();
+    final given = givenCellsFor(harness.controller.puzzle, 2).toList();
+    final controller = GameController(
+      puzzle: harness.controller.puzzle,
+      app: harness.app,
+      mode: 'campaign',
+      levelIndex: 1,
+      given: given,
+    );
+    harness.controller.dispose();
+    controller.pause();
+    await Future<void>.delayed(const Duration(milliseconds: 30));
+
+    final saved = harness.app.store.readGame();
+    expect(saved, isNotNull);
+    expect(saved!.given, given);
+    expect(saved.mode, 'campaign');
+
+    final restored = GameController(
+      puzzle: controller.puzzle,
+      app: harness.app,
+      mode: 'campaign',
+      levelIndex: 1,
+      restore: saved,
+    );
+    expect(restored.givenCells, given.toSet());
+    for (final cell in given) {
+      expect(restored.marks[cell], CellMark.bunny);
+    }
+    restored.dispose();
+    controller.dispose();
+  });
+
+  test('completar una etapa avanza la campaña', () async {
+    final harness = await createHarness(mode: 'campaign', level: 7);
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+    expect(harness.app.campaignStage, 1);
+
+    for (final cell in controller.puzzle.solution) {
+      controller.handleDoubleTap(cell);
+    }
+
+    expect(controller.finished, isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 60));
+    expect(harness.app.campaignStage, 8);
+    expect(harness.app.store.readCampaignStage(), 8);
   });
 
   test('la pista coloca un conejo de la solución sin gastar vidas', () async {

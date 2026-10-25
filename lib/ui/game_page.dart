@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../app_state.dart';
 import '../data/game_store.dart';
+import '../game/campaign.dart';
 import '../game/game_controller.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
@@ -48,12 +49,22 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
       restore = saved;
     }
 
+    final given = widget.mode == 'campaign'
+        ? givenCellsFor(
+            widget.puzzle,
+            campaignStageFor(
+              widget.app.repository,
+              widget.levelIndex,
+            ).givenBunnies,
+          )
+        : const <int>[];
     controller = GameController(
       puzzle: widget.puzzle,
       app: widget.app,
       mode: widget.mode,
       levelIndex: widget.levelIndex,
       restore: restore,
+      given: given,
     );
     _animation = Listenable.merge([controller, widget.app]);
     controller.addListener(_onControllerChanged);
@@ -189,19 +200,17 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
               onPressed: () => _goHome(dialogContext),
               child: Text(strings.home),
             ),
-            if (widget.mode == 'level')
+            if (widget.mode == 'campaign')
               FilledButton(
                 onPressed: () =>
-                    _nextLevel(dialogContext, widget.levelIndex + 1),
+                    _nextStage(dialogContext, widget.levelIndex + 1),
                 child: Text(strings.next),
               )
             else
               FilledButton(
-                onPressed: () => _nextLevel(
-                  dialogContext,
-                  widget.app.levelFor(widget.puzzle.size),
-                ),
-                child: Text(strings.playLevel),
+                onPressed: () =>
+                    _nextStage(dialogContext, widget.app.campaignStage),
+                child: Text(strings.playStage),
               ),
           ],
         );
@@ -214,16 +223,17 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     Navigator.of(context).pop();
   }
 
-  void _nextLevel(BuildContext dialogContext, int level) {
+  void _nextStage(BuildContext dialogContext, int number) {
     Navigator.of(dialogContext).pop();
-    final puzzle = widget.app.repository.levelPuzzle(widget.puzzle.size, level);
+    final stage = campaignStageFor(widget.app.repository, number);
+    final puzzle = widget.app.repository.levelPuzzle(stage.size, stage.level);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => GamePage(
           app: widget.app,
           puzzle: puzzle,
-          mode: 'level',
-          levelIndex: level,
+          mode: 'campaign',
+          levelIndex: stage.number,
         ),
       ),
     );
@@ -268,7 +278,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
         final puzzle = widget.puzzle;
         final title = widget.mode == 'daily'
             ? strings.dailyTitle
-            : strings.levelLabel(widget.levelIndex);
+            : strings.stageLabel(widget.levelIndex);
         final subtitle =
             '${strings.sizeLabel(puzzle.size)} · '
             '${strings.difficulty(puzzle.difficulty)}';
@@ -334,6 +344,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                         marks: controller.marks,
                         blocked: controller.blockedCells,
                         conflicts: controller.conflictCells,
+                        given: controller.givenCells,
                         enabled: controller.canPlay && !controller.paused,
                         onTap: controller.handleTap,
                         onDoubleTap: _handleDoubleTap,

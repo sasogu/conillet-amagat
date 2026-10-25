@@ -19,6 +19,11 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 - Cada partida tiene tres vidas. Un conejo en una casilla que no pertenece a la
   solución descuenta una vida y deja una X; sin vidas se bloquea el tablero
   hasta reiniciar. Las pistas no cuestan vidas y deshacer no las devuelve.
+- La progresión es una campaña lineal: no añadir un selector de niveles. Las
+  etapas se encadenan de 6×6 a 9×9 y el progreso vive en
+  `ronron.campaign.stage`.
+- Los conejos de pista de las primeras etapas son celdas fijas: no se pueden
+  quitar ni deshacer, y se guardan en `SavedGame.given`.
 - Cualquier puzle nuevo debe tener **solución única**, regiones conexas y un
   conejo por fila, columna y región. Validarlo con las pruebas y con
   `dart run tool/verify_pool.dart`.

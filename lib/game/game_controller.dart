@@ -23,8 +23,14 @@ class GameController extends ChangeNotifier {
     required this.mode,
     required this.levelIndex,
     SavedGame? restore,
+    Iterable<int> given = const [],
   }) : marks = List<CellMark>.filled(puzzle.cellCount, CellMark.none) {
     _regionCells = puzzle.regionCells;
+    givenCells = Set.unmodifiable(
+      (restore != null ? restore.given : given).where(
+        (cell) => cell >= 0 && cell < puzzle.cellCount,
+      ),
+    );
     if (restore != null) {
       elapsedSeconds = restore.elapsedSeconds;
       hintsUsed = restore.hintsUsed;
@@ -37,6 +43,9 @@ class GameController extends ChangeNotifier {
             : CellMark.none;
       }
     }
+    for (final cell in givenCells) {
+      marks[cell] = CellMark.bunny;
+    }
     _startTicker();
     _saveSoon();
   }
@@ -47,6 +56,7 @@ class GameController extends ChangeNotifier {
   final int levelIndex;
 
   final List<CellMark> marks;
+  late final Set<int> givenCells;
   late final List<List<int>> _regionCells;
 
   final List<_Move> _history = [];
@@ -67,6 +77,8 @@ class GameController extends ChangeNotifier {
   bool get canPlay => !finished && !failed;
 
   bool get autoCrossEnabled => app.settings.autoCross;
+
+  bool isGiven(int cell) => givenCells.contains(cell);
 
   int get bunnyCount => marks.where((mark) => mark == CellMark.bunny).length;
 
@@ -121,7 +133,7 @@ class GameController extends ChangeNotifier {
   bool get isSolvedByPlayer => puzzle.isSolution(bunnies);
 
   void handleTap(int cell) {
-    if (!canPlay) return;
+    if (!canPlay || givenCells.contains(cell)) return;
     switch (marks[cell]) {
       case CellMark.bunny:
       case CellMark.cross:
@@ -133,7 +145,9 @@ class GameController extends ChangeNotifier {
   }
 
   DoubleTapResult handleDoubleTap(int cell) {
-    if (!canPlay) return DoubleTapResult.none;
+    if (!canPlay || givenCells.contains(cell)) {
+      return DoubleTapResult.none;
+    }
     if (marks[cell] == CellMark.bunny) {
       _apply(cell, CellMark.none);
       return DoubleTapResult.removed;
@@ -158,7 +172,7 @@ class GameController extends ChangeNotifier {
   }
 
   void handleDrag(int cell) {
-    if (!canPlay) return;
+    if (!canPlay || givenCells.contains(cell)) return;
     if (marks[cell] != CellMark.none) return;
     _apply(cell, CellMark.cross);
   }
@@ -189,6 +203,9 @@ class GameController extends ChangeNotifier {
     _history.clear();
     for (var index = 0; index < marks.length; index++) {
       marks[index] = CellMark.none;
+    }
+    for (final cell in givenCells) {
+      marks[cell] = CellMark.bunny;
     }
     elapsedSeconds = 0;
     hintsUsed = 0;
@@ -282,6 +299,7 @@ class GameController extends ChangeNotifier {
     mode: mode,
     levelIndex: levelIndex,
     lives: lives,
+    given: givenCells.toList(growable: false),
   );
 
   void _saveSoon() {

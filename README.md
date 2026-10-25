@@ -25,11 +25,11 @@ diagonal.
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.2.1.apk`
+- APK universal firmado: `conillet-amagat-0.3.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.2.1.apk`.
+  `adb install conillet-amagat-0.3.0.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.
@@ -47,6 +47,10 @@ dispositivo.
 - **Tres vidas**: si escondes un conejo en una casilla que no le corresponde,
   pierdes una vida y la casilla queda marcada con una X. Al quedarte sin vidas
   puedes reiniciar el puzle con tres vidas nuevas.
+- **Progresión**: no hay selector de niveles; cada partida abre la siguiente
+  etapa de la campaña. Las tres primeras etapas traen dos conejos fijos de
+  pista y las tres siguientes uno; se distinguen por un contorno y no se
+  pueden quitar.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
 
@@ -57,7 +61,9 @@ dispositivo.
 - Regiones irregulares, desde casillas pequeñas hasta formas alargadas, como
   en los puzles de este género.
 - **Puzle diario** con tamaño rotativo, racha de días y progreso guardado.
-- **Niveles sin fin** por tamaño, con progreso por nivel.
+- **Campaña de 399 etapas** de 6×6 a 9×9, con progreso guardado y 9×9
+  infinitos al terminarla.
+- **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.
@@ -92,6 +98,7 @@ lib/
   game/puzzle.dart         modelo del puzle
   game/generator.dart      generador de puzles con solución única
   game/solver.dart         solver exacto y solver humano
+  game/campaign.dart       etapas, tamaños y conejos de pista
   game/game_controller.dart  estado de la partida
   ui/                      portada, tablero, partida y ajustes
 assets/puzzles.json        lote verificado de puzles

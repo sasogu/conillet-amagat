@@ -13,6 +13,7 @@ class AppState extends ChangeNotifier {
     settings = store.readSettings();
     stats = store.readStats();
     savedGame = store.readGame();
+    campaignStage = store.readCampaignStage();
   }
 
   final GameStore store;
@@ -21,6 +22,7 @@ class AppState extends ChangeNotifier {
   late SettingsData settings;
   late StatsData stats;
   SavedGame? savedGame;
+  late int campaignStage;
 
   Strings get strings => Strings(catalan: settings.language == 'ca');
 
@@ -32,6 +34,7 @@ class AppState extends ChangeNotifier {
     settings = store.readSettings();
     stats = store.readStats();
     savedGame = store.readGame();
+    campaignStage = store.readCampaignStage();
     notifyListeners();
   }
 
@@ -53,9 +56,13 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  int levelFor(int size) => store.completedLevels(size) + 1;
-
   int completedLevels(int size) => store.completedLevels(size);
+
+  Future<void> setCampaignStage(int stage) async {
+    campaignStage = stage;
+    await store.writeCampaignStage(stage);
+    notifyListeners();
+  }
 
   bool get dailyCompletedToday => stats.lastDaily == _dayKey(DateTime.now());
 
@@ -101,6 +108,11 @@ class AppState extends ChangeNotifier {
         levelIndex,
       );
       await store.setCompletedLevels(puzzle.size, completed);
+      if (mode == 'campaign') {
+        final next = math.max(campaignStage, levelIndex + 1);
+        campaignStage = next;
+        await store.writeCampaignStage(next);
+      }
     }
 
     await store.writeStats(stats);

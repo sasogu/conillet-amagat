@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 — 2026-10-25
+
+- Nueva **progresión por etapas**: una secuencia lineal de 399 etapas que va de
+  6×6 a 9×9 y sigue con 9×9 infinitos. Se elimina el selector de niveles.
+- Las etapas 1 a 3 incluyen dos conejos fijos de pista; las etapas 4 a 6, uno.
+  Los conejos de pista se marcan con un contorno y no se pueden quitar.
+- La portada muestra la etapa actual, el progreso y un único botón para jugar.
+  El puzle diario se mantiene como modo independiente.
+- Tablero rediseñado con casillas redondeadas y separadas entre sí; se eliminan
+  los bordes gruesos entre regiones y la cuadrícula gana protagonismo.
+
 ## 0.2.1 — 2026-10-25
 
 - Identificador de la aplicación cambiado a `es.sasogu.conillet`, acorde con el
