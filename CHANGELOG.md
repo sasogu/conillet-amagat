@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 — 2026-10-25
+
+- **Revivir con zanahorias**: al quedarse sin vidas se puede gastar 3
+  zanahorias para recuperar una vida y seguir la partida.
+- Doble toque más seguro: sobre una X primero la quita, sin gastar vida.
+- **Tutorial de primera vez** con las reglas, las vidas, los conejos fijos y
+  las zanahorias; también se puede abrir desde ajustes.
+- **Aspectos de conejo**: cinco colores que se desbloquean con zanahorias y se
+  equipan al momento. El conejo blanco sigue siendo el inicial.
+
 ## 0.4.0 — 2026-10-25
 
 - **Puntuación por puzle resuelto**: base según el tamaño, bonus por resolver

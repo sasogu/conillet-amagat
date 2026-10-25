@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../game/bunny_skin.dart';
+
 /// Dibuja una cara de conejo geométrica y original.
 void paintBunnyFace(
   Canvas canvas,
@@ -103,20 +105,29 @@ void paintBunnyFace(
 }
 
 class BunnyLogo extends StatelessWidget {
-  const BunnyLogo({super.key, this.size = 56});
+  const BunnyLogo({
+    super.key,
+    this.size = 56,
+    this.skin = whiteBunnySkin,
+  });
 
   final double size;
+  final BunnySkin skin;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
       dimension: size,
-      child: CustomPaint(painter: _BunnyLogoPainter()),
+      child: CustomPaint(painter: _BunnyLogoPainter(skin)),
     );
   }
 }
 
 class _BunnyLogoPainter extends CustomPainter {
+  _BunnyLogoPainter(this.skin);
+
+  final BunnySkin skin;
+
   static const _tiles = [
     Color(0xFFF3C6B8),
     Color(0xFFF4E1AD),
@@ -162,13 +173,14 @@ class _BunnyLogoPainter extends CustomPainter {
       canvas,
       Offset(size.width / 2, size.height * 0.57),
       size.width * 0.22,
-      body: const Color(0xFFFFF8EC),
-      eye: const Color(0xFF2F2A26),
-      outline: const Color(0x992F2A26),
-      innerEar: const Color(0xFFE7A79E),
+      body: skin.body,
+      eye: skin.eye,
+      outline: skin.outline,
+      innerEar: skin.innerEar,
     );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _BunnyLogoPainter oldDelegate) =>
+      oldDelegate.skin != skin;
 }

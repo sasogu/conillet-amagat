@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../app_info.dart';
 import '../app_state.dart';
 import '../data/game_store.dart';
+import '../game/bunny_skin.dart';
 import '../game/campaign.dart';
 import '../game/puzzle.dart';
 import '../l10n/strings.dart';
 import 'bunny_art.dart';
 import 'carrot_icon.dart';
 import 'game_page.dart';
+import 'how_to_play.dart';
 import 'settings_sheet.dart';
 
 class HomePage extends StatelessWidget {
@@ -63,7 +65,8 @@ class HomePage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
               children: [
-                _Header(strings: strings),
+                const _FirstRunTutorialGate(),
+                _Header(strings: strings, skin: app.skin),
                 const SizedBox(height: 22),
                 if (saved != null) ...[
                   _ContinueCard(
@@ -135,16 +138,17 @@ class HomePage extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.strings});
+  const _Header({required this.strings, required this.skin});
 
   final Strings strings;
+  final BunnySkin skin;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Row(
       children: [
-        const BunnyLogo(size: 58),
+        BunnyLogo(size: 58, skin: skin),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
@@ -679,4 +683,31 @@ class _Stat extends StatelessWidget {
       ],
     );
   }
+}
+
+class _FirstRunTutorialGate extends StatefulWidget {
+  const _FirstRunTutorialGate();
+
+  @override
+  State<_FirstRunTutorialGate> createState() => _FirstRunTutorialGateState();
+}
+
+class _FirstRunTutorialGateState extends State<_FirstRunTutorialGate> {
+  bool _scheduled = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_scheduled) return;
+    _scheduled = true;
+    final app = AppScope.of(context);
+    if (app.tutorialSeen) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showHowToPlay(context, onSeen: app.markTutorialSeen);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }

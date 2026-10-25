@@ -226,6 +226,71 @@ void main() {
     expect(harness.app.store.readCampaignStage(), 8);
   });
 
+  test('doble toque sobre una X la quita sin gastar vida', () async {
+    final harness = await createHarness();
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+
+    final wrong = List.generate(
+      controller.puzzle.cellCount,
+      (index) => index,
+    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
+
+    expect(controller.handleDoubleTap(wrong), DoubleTapResult.wrong);
+    expect(controller.lives, startingLives - 1);
+    expect(controller.marks[wrong], CellMark.cross);
+    expect(controller.handleDoubleTap(wrong), DoubleTapResult.removed);
+    expect(controller.lives, startingLives - 1);
+    expect(controller.marks[wrong], CellMark.none);
+  });
+
+  test('revivir cuesta zanahorias y devuelve una vida', () async {
+    final harness = await createHarness();
+    harness.app.stats.carrots = 5;
+    await harness.app.store.writeStats(harness.app.stats);
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+
+    final wrong = [
+      for (var cell = 0; cell < controller.puzzle.cellCount; cell++)
+        if (!controller.puzzle.solution.contains(cell)) cell,
+    ];
+    for (var index = 0; index < 3; index++) {
+      controller.handleDoubleTap(wrong[index]);
+    }
+    expect(controller.failed, isTrue);
+    expect(controller.canRevive, isTrue);
+
+    expect(await controller.revive(), isTrue);
+    expect(controller.failed, isFalse);
+    expect(controller.lives, 1);
+    expect(harness.app.stats.carrots, 2);
+    expect(harness.app.store.readStats().carrots, 2);
+
+    final correct = controller.puzzle.solution.first;
+    expect(controller.handleDoubleTap(correct), DoubleTapResult.placed);
+    expect(controller.marks[correct], CellMark.bunny);
+  });
+
+  test('sin zanahorias suficientes no se puede revivir', () async {
+    final harness = await createHarness();
+    final controller = harness.controller;
+    addTearDown(controller.dispose);
+
+    final wrong = [
+      for (var cell = 0; cell < controller.puzzle.cellCount; cell++)
+        if (!controller.puzzle.solution.contains(cell)) cell,
+    ];
+    for (var index = 0; index < 3; index++) {
+      controller.handleDoubleTap(wrong[index]);
+    }
+    expect(controller.failed, isTrue);
+    expect(controller.canRevive, isFalse);
+    expect(await controller.revive(), isFalse);
+    expect(controller.failed, isTrue);
+    expect(controller.lives, 0);
+  });
+
   test('la pista coloca un conejo de la solución sin gastar vidas', () async {
     final harness = await createHarness();
     final controller = harness.controller;
@@ -268,7 +333,9 @@ void main() {
     final wrong = List.generate(
       controller.puzzle.cellCount,
       (index) => index,
-    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
+    ).firstWhere(
+      (cell) => cell != 0 && !controller.puzzle.solution.contains(cell),
+    );
     controller.handleTap(0);
     controller.handleDoubleTap(bunnyCell);
     controller.handleDoubleTap(wrong);
@@ -305,7 +372,9 @@ void main() {
     final wrong = List.generate(
       controller.puzzle.cellCount,
       (index) => index,
-    ).firstWhere((cell) => !controller.puzzle.solution.contains(cell));
+    ).firstWhere(
+      (cell) => cell != 0 && !controller.puzzle.solution.contains(cell),
+    );
     controller.handleTap(0);
     controller.hint();
     controller.handleDoubleTap(wrong);

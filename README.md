@@ -23,17 +23,21 @@ diagonal.
   <img src="docs/screenshots/win-light.png" width="260" alt="Puntos y zanahorias al resolver" />
   <img src="docs/screenshots/win-dark.png" width="260" alt="Puntos y zanahorias al resolver en modo oscuro" />
 </p>
+<p align="center">
+  <img src="docs/screenshots/tutorial-light.png" width="260" alt="Tutorial de la primera vez" />
+  <img src="docs/screenshots/skins-light.png" width="260" alt="Aspectos del conejo" />
+</p>
 
 ## Descargar
 
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.4.0.apk`
+- APK universal firmado: `conillet-amagat-0.5.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.4.0.apk`.
+  `adb install conillet-amagat-0.5.0.apk`.
 
 La aplicación no pide permisos, no usa Internet y guarda todo en el propio
 dispositivo.
@@ -43,14 +47,14 @@ dispositivo.
 - **Un toque** sobre una casilla vacía marca una X (casilla descartada). Otro
   toque borra la X.
 - **Doble toque** esconde un conejo. Si la casilla ya tiene un conejo, el doble
-  toque lo quita.
+  toque lo quita; si tiene una X, primero la deja libre sin gastar vida.
 - **Arrastra** el dedo para marcar varias X seguidas.
 - Los conejos que se molestan entre sí (misma fila, columna, región o contacto
   diagonal) se resaltan en rojo.
 - **X auto** marca automáticamente las casillas que ya no pueden tener conejo.
 - **Tres vidas**: si escondes un conejo en una casilla que no le corresponde,
   pierdes una vida y la casilla queda marcada con una X. Al quedarte sin vidas
-  puedes reiniciar el puzle con tres vidas nuevas.
+  puedes reiniciar el puzle o revivir con 3 zanahorias.
 - **Progresión**: no hay selector de niveles; cada partida abre la siguiente
   etapa de la campaña. Las tres primeras etapas traen dos conejos fijos de
   pista y las tres siguientes uno; se distinguen por un contorno y no se
@@ -72,7 +76,9 @@ dispositivo.
   infinitos al terminarla.
 - **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
 - **Puntos y zanahorias**: puntuación por tiempo y vidas conservadas, con
-  contadores acumulados en la portada.
+  contadores acumulados en la portada. Las zanahorias sirven para revivir.
+- **Aspectos de conejo**: cinco colores desbloqueables con zanahorias.
+- **Tutorial de primera vez** y acceso a «Cómo jugar» desde ajustes.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.
@@ -109,8 +115,9 @@ lib/
   game/solver.dart         solver exacto y solver humano
   game/campaign.dart       etapas, tamaños y conejos de pista
   game/scoring.dart        puntos y zanahorias por puzle
+  game/bunny_skin.dart     colores y precios de los conejos
   game/game_controller.dart  estado de la partida
-  ui/                      portada, tablero, partida, iconos y ajustes
+  ui/                      portada, tablero, partida, tutorial, aspectos y ajustes
 assets/puzzles.json        lote verificado de puzles
 tool/                      generación y verificación del lote
 test/                      pruebas de lógica, controlador e interfaz

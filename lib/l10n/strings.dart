@@ -29,6 +29,42 @@ class Strings {
   String get allStagesDone =>
       catalan ? 'Totes les etapes completades' : 'Todas las etapas completadas';
   String get settings => catalan ? 'Ajustos' : 'Ajustes';
+  String get howToPlay => catalan ? 'Com jugar' : 'Cómo jugar';
+  String get appearance => catalan ? 'Aspectes' : 'Aspectos';
+  String get skinSelected => catalan ? 'En ús' : 'En uso';
+  String get skinChoose => catalan ? 'Triar' : 'Elegir';
+  String get skinUnlock => catalan ? 'Desbloqueja' : 'Desbloquear';
+  String skinName(String id) => switch (id) {
+    'gray' => catalan ? 'Gris' : 'Gris',
+    'brown' => catalan ? 'Marró' : 'Marrón',
+    'night' => catalan ? 'Nocturn' : 'Nocturno',
+    'carrot' => catalan ? 'Pastanaga' : 'Zanahoria',
+    _ => catalan ? 'Blanc' : 'Blanco',
+  };
+  String notEnoughCarrots(int cost) => catalan
+      ? 'Et falten pastanagues: aquest aspecte costa $cost.'
+      : 'Te faltan zanahorias: este aspecto cuesta $cost.';
+  String get understood => catalan ? 'Entesos' : 'Entendido';
+  String get tutorialTapTitle =>
+      catalan ? 'Un toc marca una X' : 'Un toque marca una X';
+  String get tutorialTapBody => catalan
+      ? 'Descarta la casella; un altre toc la torna a deixar lliure.'
+      : 'Descarta la casilla; otro toque la vuelve a dejar libre.';
+  String get tutorialBunnyTitle =>
+      catalan ? 'Doble toc amaga un conill' : 'Doble toque esconde un conejo';
+  String get tutorialBunnyBody => catalan
+      ? 'Si el conill no va en eixa casella, perds una vida. Arrossega per a marcar diverses X.'
+      : 'Si el conejo no va en esa casilla, pierdes una vida. Arrastra para marcar varias X.';
+  String get tutorialLivesTitle =>
+      catalan ? 'Tres vides per puzle' : 'Tres vidas por puzle';
+  String get tutorialLivesBody => catalan
+      ? 'Un conill mal col·locat gasta una vida. Els conills amb contorn són pistes fixes i no es poden traure.'
+      : 'Un conejo mal colocado gasta una vida. Los conejos con contorno son pistas fijas y no se pueden quitar.';
+  String get tutorialCarrotsTitle =>
+      catalan ? 'Pastanagues' : 'Zanahorias';
+  String get tutorialCarrotsBody => catalan
+      ? 'Cada vida que et sobra es converteix en una pastanaga. Usa-les per a reviure si et quedes sense vides.'
+      : 'Cada vida que te sobra se convierte en una zanahoria. Úsalas para revivir si te quedas sin vidas.';
   String get close => catalan ? 'Tanca' : 'Cerrar';
   String get cancel => catalan ? 'Cancel·la' : 'Cancelar';
   String get restart => catalan ? 'Reinicia' : 'Reiniciar';
@@ -57,9 +93,18 @@ class Strings {
       ? 'Conill mal col·locat. Et ${remaining == 1 ? 'queda' : 'queden'} $remaining ${remaining == 1 ? 'vida' : 'vides'}.'
       : 'Conejo mal colocado. Te ${remaining == 1 ? 'queda' : 'quedan'} $remaining ${remaining == 1 ? 'vida' : 'vidas'}.';
   String get noLivesTitle => catalan ? 'Sense vides' : 'Sin vidas';
-  String get noLivesBody => catalan
-      ? 'Has esgotat les tres vides. Reinicia el puzle per a tornar-ho a provar.'
-      : 'Has agotado las tres vidas. Reinicia el puzle para volver a intentarlo.';
+  String get noLivesBody =>
+      catalan ? 'Has esgotat les tres vides.' : 'Has agotado las tres vidas.';
+  String get revive => catalan ? 'Reviu' : 'Revivir';
+  String reviveWithCarrots(int cost) => catalan
+      ? 'Reviu · $cost pastanagues'
+      : 'Revivir · $cost zanahorias';
+  String carrotsOwned(int count) => catalan
+      ? 'Tens $count ${count == 1 ? 'pastanaga' : 'pastanagues'}'
+      : 'Tienes $count ${count == 1 ? 'zanahoria' : 'zanahorias'}';
+  String reviveNeeds(int cost) => catalan
+      ? 'Necessites $cost pastanagues per a reviure.'
+      : 'Necesitas $cost zanahorias para revivir.';
   String get time => catalan ? 'Temps' : 'Tiempo';
   String get hints => catalan ? 'Pistes' : 'Pistas';
   String instructions() => catalan

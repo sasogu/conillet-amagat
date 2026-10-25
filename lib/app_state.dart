@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'data/game_store.dart';
 import 'data/puzzle_repository.dart';
+import 'game/bunny_skin.dart';
 import 'game/puzzle.dart';
 import 'game/scoring.dart';
 import 'l10n/strings.dart';
@@ -15,6 +16,9 @@ class AppState extends ChangeNotifier {
     stats = store.readStats();
     savedGame = store.readGame();
     campaignStage = store.readCampaignStage();
+    tutorialSeen = store.readTutorialSeen();
+    unlockedSkins = store.readUnlockedSkins();
+    selectedSkin = _validSkin(store.readSelectedSkin());
   }
 
   final GameStore store;
@@ -24,6 +28,11 @@ class AppState extends ChangeNotifier {
   late StatsData stats;
   SavedGame? savedGame;
   late int campaignStage;
+  late bool tutorialSeen;
+  late Set<String> unlockedSkins;
+  late String selectedSkin;
+
+  BunnySkin get skin => skinById(selectedSkin);
 
   Strings get strings => Strings(catalan: settings.language == 'ca');
 
@@ -36,6 +45,9 @@ class AppState extends ChangeNotifier {
     stats = store.readStats();
     savedGame = store.readGame();
     campaignStage = store.readCampaignStage();
+    tutorialSeen = store.readTutorialSeen();
+    unlockedSkins = store.readUnlockedSkins();
+    selectedSkin = _validSkin(store.readSelectedSkin());
     notifyListeners();
   }
 
@@ -43,6 +55,46 @@ class AppState extends ChangeNotifier {
     settings = settings.copyWith(themeMode: mode);
     await store.writeSettings(settings);
     notifyListeners();
+  }
+
+  String _validSkin(String id) =>
+      unlockedSkins.contains(id) ? id : 'white';
+
+  Future<bool> selectSkin(String id) async {
+    if (!unlockedSkins.contains(id)) return false;
+    selectedSkin = id;
+    await store.writeSelectedSkin(id);
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> unlockSkin(String id) async {
+    final skin = skinById(id);
+    if (unlockedSkins.contains(id)) return selectSkin(id);
+    if (stats.carrots < skin.cost) return false;
+    stats.carrots -= skin.cost;
+    unlockedSkins = {...unlockedSkins, id};
+    selectedSkin = id;
+    await store.writeStats(stats);
+    await store.writeUnlockedSkins(unlockedSkins);
+    await store.writeSelectedSkin(id);
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> markTutorialSeen() async {
+    if (tutorialSeen) return;
+    tutorialSeen = true;
+    await store.writeTutorialSeen(true);
+    notifyListeners();
+  }
+
+  Future<bool> spendCarrots(int amount) async {
+    if (amount <= 0 || stats.carrots < amount) return false;
+    stats.carrots -= amount;
+    await store.writeStats(stats);
+    notifyListeners();
+    return true;
   }
 
   Future<void> setAutoCross(bool enabled) async {

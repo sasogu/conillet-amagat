@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../app_info.dart';
 import '../app_state.dart';
+import 'bunny_art.dart';
+import 'how_to_play.dart';
+import 'skins_page.dart';
 
 Future<void> showSettingsSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -75,6 +78,29 @@ class SettingsSheet extends StatelessWidget {
               title: Text(strings.autoCross),
               value: app.settings.autoCross,
               onChanged: app.setAutoCross,
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: BunnyLogo(size: 36, skin: app.skin),
+              title: Text(strings.appearance),
+              subtitle: Text(strings.skinName(app.selectedSkin)),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                final navigator = Navigator.of(context);
+                navigator.pop();
+                navigator.push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => SkinsPage(app: app),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.help_outline),
+              title: Text(strings.howToPlay),
+              onTap: () =>
+                  showHowToPlay(context, onSeen: app.markTutorialSeen),
             ),
             const Divider(height: 28),
             Text(strings.about, style: theme.textTheme.titleSmall),

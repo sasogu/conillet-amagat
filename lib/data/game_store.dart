@@ -157,6 +157,9 @@ class GameStore {
   static const _gameKey = 'ronron.game.v1';
   static const _levelKeyPrefix = 'ronron.level.';
   static const _stageKey = 'ronron.campaign.stage';
+  static const _tutorialKey = 'ronron.tutorial.v1';
+  static const _skinsKey = 'ronron.skins.unlocked';
+  static const _selectedSkinKey = 'ronron.skins.selected';
 
   SettingsData readSettings() {
     final raw = _prefs.getString(_settingsKey);
@@ -217,4 +220,24 @@ class GameStore {
 
   Future<void> writeCampaignStage(int stage) =>
       _prefs.setInt(_stageKey, stage);
+
+  bool readTutorialSeen() => _prefs.getBool(_tutorialKey) ?? false;
+
+  Future<void> writeTutorialSeen(bool value) =>
+      _prefs.setBool(_tutorialKey, value);
+
+  Set<String> readUnlockedSkins() {
+    final stored = _prefs.getStringList(_skinsKey);
+    final skins = stored == null ? <String>{} : stored.toSet();
+    skins.add('white');
+    return skins;
+  }
+
+  Future<void> writeUnlockedSkins(Set<String> skins) =>
+      _prefs.setStringList(_skinsKey, skins.toList(growable: false));
+
+  String readSelectedSkin() => _prefs.getString(_selectedSkinKey) ?? 'white';
+
+  Future<void> writeSelectedSkin(String id) =>
+      _prefs.setString(_selectedSkinKey, id);
 }

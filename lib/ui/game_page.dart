@@ -125,20 +125,55 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
           color: Theme.of(dialogContext).colorScheme.error,
         ),
         title: Text(strings.noLivesTitle, textAlign: TextAlign.center),
-        content: Text(strings.noLivesBody, textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(strings.noLivesBody, textAlign: TextAlign.center),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CarrotIcon(size: 20),
+                const SizedBox(width: 6),
+                Text(
+                  strings.carrotsOwned(widget.app.stats.carrots),
+                  style: Theme.of(dialogContext).textTheme.labelLarge,
+                ),
+              ],
+            ),
+            if (!controller.canRevive) ...[
+              const SizedBox(height: 8),
+              Text(
+                strings.reviveNeeds(reviveCost),
+                textAlign: TextAlign.center,
+                style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ],
+        ),
         actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
           TextButton(
             onPressed: () => _goHome(dialogContext),
             child: Text(strings.home),
           ),
-          FilledButton(
+          FilledButton.tonal(
             onPressed: () {
               Navigator.of(dialogContext).pop();
               controller.reset();
             },
             child: Text(strings.restart),
           ),
+          if (controller.canRevive)
+            FilledButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await controller.revive();
+              },
+              child: Text(strings.reviveWithCarrots(reviveCost)),
+            ),
         ],
       ),
     );
@@ -168,7 +203,9 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
           lives: controller.lives,
         );
         return AlertDialog(
-          icon: const Center(child: BunnyLogo(size: 58)),
+          icon: Center(
+            child: BunnyLogo(size: 58, skin: widget.app.skin),
+          ),
           title: Text(strings.winTitle, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -411,6 +448,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
                         blocked: controller.blockedCells,
                         conflicts: controller.conflictCells,
                         given: controller.givenCells,
+                        skin: widget.app.skin,
                         enabled: controller.canPlay && !controller.paused,
                         onTap: controller.handleTap,
                         onDoubleTap: _handleDoubleTap,

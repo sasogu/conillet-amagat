@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../data/game_store.dart';
+import '../game/bunny_skin.dart';
 import '../game/puzzle.dart';
 import '../theme.dart';
 import 'bunny_art.dart';
@@ -15,6 +16,7 @@ class BoardView extends StatefulWidget {
     required this.blocked,
     required this.conflicts,
     this.given = const {},
+    this.skin = whiteBunnySkin,
     required this.onTap,
     required this.onDoubleTap,
     required this.onDragMark,
@@ -27,6 +29,7 @@ class BoardView extends StatefulWidget {
   final Set<int> blocked;
   final Set<int> conflicts;
   final Set<int> given;
+  final BunnySkin skin;
   final ValueChanged<int> onTap;
   final ValueChanged<int> onDoubleTap;
   final ValueChanged<int> onDragMark;
@@ -70,6 +73,7 @@ class _BoardViewState extends State<BoardView> {
                 blocked: widget.blocked,
                 conflicts: widget.conflicts,
                 given: widget.given,
+                skin: widget.skin,
                 colors: colors,
               ),
             ),
@@ -124,6 +128,7 @@ class _BoardPainter extends CustomPainter {
     required this.blocked,
     required this.conflicts,
     required this.given,
+    required this.skin,
     required this.colors,
   });
 
@@ -132,6 +137,7 @@ class _BoardPainter extends CustomPainter {
   final Set<int> blocked;
   final Set<int> conflicts;
   final Set<int> given;
+  final BunnySkin skin;
   final BoardColors colors;
 
   @override
@@ -171,7 +177,7 @@ class _BoardPainter extends CustomPainter {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = math.max(1.1, cellSize * 0.028)
-            ..color = colors.bunnyEye.withValues(alpha: 0.55),
+            ..color = skin.outline,
         );
       }
     }
@@ -191,10 +197,10 @@ class _BoardPainter extends CustomPainter {
           canvas,
           rect.center,
           cellSize * 0.245,
-          body: colors.bunny,
-          eye: colors.bunnyEye,
-          outline: colors.bunnyEye.withValues(alpha: 0.55),
-          innerEar: const Color(0xFFE7A79E).withValues(alpha: 0.8),
+          body: skin.body,
+          eye: skin.eye,
+          outline: skin.outline,
+          innerEar: skin.innerEar,
         );
         if (conflicts.contains(cell)) {
           canvas.drawRRect(

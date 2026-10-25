@@ -78,8 +78,6 @@ class AppTheme {
 class BoardColors {
   const BoardColors({
     required this.regions,
-    required this.bunny,
-    required this.bunnyEye,
     required this.cross,
     required this.autoCross,
     required this.gap,
@@ -87,8 +85,6 @@ class BoardColors {
   });
 
   final List<Color> regions;
-  final Color bunny;
-  final Color bunnyEye;
   final Color cross;
   final Color autoCross;
   final Color gap;
@@ -107,8 +103,6 @@ class BoardColors {
       Color(0xFFEAD6BE),
       Color(0xFFD9E2F0),
     ],
-    bunny: Color(0xFFFFF6E9),
-    bunnyEye: Color(0xFF3B322C),
     cross: Color(0xFF8A7F72),
     autoCross: Color(0xFFB4A99C),
     gap: Color(0xFFFFFCF6),
@@ -128,8 +122,6 @@ class BoardColors {
       Color(0xFF5C6E8B), // pizarra
       Color(0xFF8B7960), // arena
     ],
-    bunny: Color(0xFFFFFBF2),
-    bunnyEye: Color(0xFF221E1A),
     cross: Color(0xFFE6DCCB),
     autoCross: Color(0xFF4A453D),
     gap: Color(0xFF0A0D0C),

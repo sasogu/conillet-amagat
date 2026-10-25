@@ -15,7 +15,8 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 ## Reglas del proyecto
 
 - Mantener la jugabilidad: un toque marca X, doble toque pone o quita un conejo
-  y arrastrar marca varias X. No cambiar este esquema sin pedirlo.
+  y arrastrar marca varias X. Sobre una X, el doble toque primero la quita sin
+  gastar vida. No cambiar este esquema sin pedirlo.
 - Cada partida tiene tres vidas. Un conejo en una casilla que no pertenece a la
   solución descuenta una vida y deja una X; sin vidas se bloquea el tablero
   hasta reiniciar. Las pistas no cuestan vidas y deshacer no las devuelve.
@@ -27,6 +28,13 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 - La puntuación se calcula solo en `lib/game/scoring.dart` (base por tamaño,
   bonus por tiempo y por vidas). No duplicar la fórmula en la interfaz. Las
   vidas restantes se convierten en zanahorias y se acumulan en `StatsData`.
+- Revivir cuesta `reviveCost` (3 zanahorias) y devuelve una vida. No cambiar el
+  coste sin revisar el equilibrio de la economía.
+- Los aspectos viven en `lib/game/bunny_skin.dart`; el desbloqueo y la selección
+  se guardan en `ronron.skins.unlocked` y `ronron.skins.selected`. El blanco
+  debe seguir desbloqueado por defecto.
+- El tutorial de primera vez se guarda en `ronron.tutorial.v1` y se puede
+  reabrir desde ajustes.
 - Cualquier puzle nuevo debe tener **solución única**, regiones conexas y un
   conejo por fila, columna y región. Validarlo con las pruebas y con
   `dart run tool/verify_pool.dart`.

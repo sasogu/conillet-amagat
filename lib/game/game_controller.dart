@@ -9,6 +9,8 @@ import 'puzzle.dart';
 
 enum DoubleTapResult { none, placed, removed, wrong, outOfLives }
 
+const int reviveCost = 3;
+
 class _Move {
   const _Move(this.cell, this.previous);
 
@@ -75,6 +77,8 @@ class GameController extends ChangeNotifier {
   bool get canUndo => _history.isNotEmpty && !finished && !failed;
 
   bool get canPlay => !finished && !failed;
+
+  bool get canRevive => failed && app.stats.carrots >= reviveCost;
 
   bool get autoCrossEnabled => app.settings.autoCross;
 
@@ -152,6 +156,10 @@ class GameController extends ChangeNotifier {
       _apply(cell, CellMark.none);
       return DoubleTapResult.removed;
     }
+    if (marks[cell] == CellMark.cross) {
+      _apply(cell, CellMark.none);
+      return DoubleTapResult.removed;
+    }
 
     if (!puzzle.solution.contains(cell)) {
       lives = (lives - 1).clamp(0, startingLives);
@@ -214,6 +222,17 @@ class GameController extends ChangeNotifier {
     _restartTicker();
     _saveSoon();
     notifyListeners();
+  }
+
+  Future<bool> revive() async {
+    if (!failed) return false;
+    if (!await app.spendCarrots(reviveCost)) return false;
+    lives = 1;
+    failed = false;
+    _startTicker();
+    _persistNow();
+    notifyListeners();
+    return true;
   }
 
   void pause() {
