@@ -46,11 +46,11 @@ también puede usar el ranking opcional, con la API en
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.7.0.apk`
+- APK universal firmado: `conillet-amagat-0.8.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.7.0.apk`.
+  `adb install conillet-amagat-0.8.0.apk`.
 
 El juego funciona sin conexión y guarda el progreso en el dispositivo. El
 ranking es opcional: solo usa Internet si decides participar y enviar tu
@@ -77,8 +77,10 @@ marca.
   (30 s por casilla de lado) avanza 2 etapas; si además no se usan pistas y se
   baja del 60 % de ese tiempo, avanza 3.
 - **Ranking opcional**: al resolver el puzle diario puedes enviar tu marca y
-  competir en la clasificación diaria y en la histórica entre dispositivos.
-  Solo se envía el apodo, un identificador aleatorio y la marca.
+  competir en la clasificación diaria y en la histórica. La pestaña **General**
+  añade la clasificación por puntos totales de la app (campaña + diario), que se
+  sincroniza manualmente. Solo se envía el apodo, un identificador aleatorio,
+  la marca y, si usas la general, los puntos totales.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
 - Al resolver un puzle se suman **puntos** según el tamaño, el tiempo empleado
@@ -99,8 +101,9 @@ marca.
   contadores acumulados en la portada. Las zanahorias sirven para revivir.
 - **Aspectos de conejo**: cinco colores desbloqueables con zanahorias.
 - **Tutorial de primera vez** y acceso a «Cómo jugar» desde ajustes.
-- **Ranking opcional** del puzle diario (top 20 diario e histórico), con apodo
-  e identificador anónimo y validación en el servidor.
+- **Ranking opcional**: top 20 diario, histórico por suma de marcas y general
+  por puntos totales (campaña + diario), con apodo e identificador anónimo y
+  validación en el servidor.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.

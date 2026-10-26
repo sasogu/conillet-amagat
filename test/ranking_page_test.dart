@@ -28,7 +28,8 @@ Future<AppState> createApp() async {
     ..lastDailyScore = 1500
     ..lastDailySeconds = 120
     ..lastDailyLives = 3
-    ..lastDailySize = 6;
+    ..lastDailySize = 6
+    ..points = 18450;
   return app;
 }
 
@@ -60,6 +61,22 @@ void main() {
                 'nickname': 'Tester',
                 'total': 4500,
                 'days': 3,
+                'me': true,
+              },
+            ],
+            'my': null,
+          }),
+          200,
+        );
+      }
+      if (request.url.path.endsWith('/general')) {
+        return http.Response(
+          jsonEncode({
+            'entries': [
+              {
+                'rank': 1,
+                'nickname': 'Tester',
+                'points': 18450,
                 'me': true,
               },
             ],
@@ -108,6 +125,15 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('4.500'), findsOneWidget);
+
+    await tester.tap(find.text('General'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.textContaining('18.450'), findsWidgets);
+    await tester.tap(find.text('Enviar mis puntos'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Puntos enviados'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();

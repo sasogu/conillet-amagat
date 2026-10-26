@@ -136,4 +136,40 @@ void main() {
 
     api.close();
   });
+
+  test('envía los puntos totales y lee la clasificación general', () async {
+    final client = MockClient((request) async {
+      if (request.method == 'POST') {
+        expect(request.url.path.endsWith('/points'), isTrue);
+        expect(request.body.contains('"points":18450'), isTrue);
+        return http.Response(
+          jsonEncode({'ok': true, 'points': 18450}),
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }
+      return http.Response(
+        jsonEncode({
+          'entries': [
+            {'rank': 1, 'nickname': 'Tester', 'points': 18450, 'me': true},
+          ],
+          'my': {'rank': 1, 'nickname': 'Tester', 'points': 18450},
+        }),
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
+    });
+    final api = RankingApi(client: client);
+
+    await api.submitPoints(
+      deviceId: 'test-device-0000000001',
+      nickname: 'Tester',
+      points: 18450,
+    );
+    final general = await api.general(deviceId: 'test-device-0000000001');
+    expect(general.entries.single.points, 18450);
+    expect(general.my?.rank, 1);
+
+    api.close();
+  });
 }

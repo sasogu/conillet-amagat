@@ -4,7 +4,7 @@ import '../data/game_store.dart';
 import '../l10n/strings.dart';
 import '../ranking/ranking_api.dart';
 
-enum _RankingTab { daily, history }
+enum _RankingTab { daily, history, general }
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key, required this.app, this.api});
@@ -24,6 +24,7 @@ class _RankingPageState extends State<RankingPage> {
   _RankingTab _tab = _RankingTab.daily;
   DailyRanking? _daily;
   HistoryRanking? _history;
+  GeneralRanking? _general;
   String? _error;
   bool _loading = true;
   bool _submitting = false;
@@ -68,11 +69,18 @@ class _RankingPageState extends State<RankingPage> {
           _daily = data;
           _loading = false;
         });
-      } else {
+      } else if (_tab == _RankingTab.history) {
         final data = await _api.history(deviceId: widget.app.playerId);
         if (!mounted || requestId != _requestId) return;
         setState(() {
           _history = data;
+          _loading = false;
+        });
+      } else {
+        final data = await _api.general(deviceId: widget.app.playerId);
+        if (!mounted || requestId != _requestId) return;
+        setState(() {
+          _general = data;
           _loading = false;
         });
       }
@@ -188,6 +196,34 @@ class _RankingPageState extends State<RankingPage> {
     }
   }
 
+  Future<void> _syncPoints() async {
+    if (_submitting) return;
+    if (widget.app.nickname.isEmpty) {
+      _showMessage(widget.app.strings.rankingJoinTitle);
+      return;
+    }
+    setState(() => _submitting = true);
+    try {
+      await _api.submitPoints(
+        deviceId: widget.app.playerId,
+        nickname: widget.app.nickname,
+        points: widget.app.stats.points,
+      );
+      if (!mounted) return;
+      setState(() => _submitting = false);
+      _showMessage(widget.app.strings.rankingPointsSent);
+      await _load();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _submitting = false);
+      _showMessage(
+        error is RankingException
+            ? error.message
+            : widget.app.strings.rankingError,
+      );
+    }
+  }
+
   void _showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
@@ -239,12 +275,14 @@ class _RankingPageState extends State<RankingPage> {
                   ButtonSegment(
                     value: _RankingTab.daily,
                     label: Text(strings.rankingToday),
-                    icon: const Icon(Icons.today_outlined),
                   ),
                   ButtonSegment(
                     value: _RankingTab.history,
                     label: Text(strings.rankingHistory),
-                    icon: const Icon(Icons.emoji_events_outlined),
+                  ),
+                  ButtonSegment(
+                    value: _RankingTab.general,
+                    label: Text(strings.rankingGeneral),
                   ),
                 ],
                 selected: {_tab},
@@ -261,6 +299,16 @@ class _RankingPageState extends State<RankingPage> {
                   submitting: _submitting,
                   submitted: _submitted,
                   onSubmit: _submit,
+                  theme: theme,
+                ),
+                const SizedBox(height: 14),
+              ] else if (_tab == _RankingTab.general) ...[
+                _GeneralPointsCard(
+                  strings: strings,
+                  points: widget.app.stats.points,
+                  canSync: nickname.isNotEmpty,
+                  submitting: _submitting,
+                  onSync: _syncPoints,
                   theme: theme,
                 ),
                 const SizedBox(height: 14),
@@ -283,20 +331,28 @@ class _RankingPageState extends State<RankingPage> {
                   strings: strings,
                   theme: theme,
                 )
-              else
+              else if (_tab == _RankingTab.history)
                 _HistoryList(
                   ranking: _history,
                   strings: strings,
                   theme: theme,
+                )
+              else
+                _GeneralList(
+                  ranking: _general,
+                  strings: strings,
+                  theme: theme,
                 ),
-              const SizedBox(height: 20),
-              Text(
-                strings.rankingPrivacy,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              if (nickname.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Text(
+                  strings.rankingPrivacy,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         );
@@ -742,6 +798,187 @@ class _MyHistoryTile extends StatelessWidget {
           '${value.nickname} · '
           '${Strings.formatNumber(value.total)} ${strings.points.toLowerCase()}'
           ' · ${strings.days(value.days)}',
+        ),
+      ),
+    );
+  }
+}
+
+class _GeneralPointsCard extends StatelessWidget {
+  const _GeneralPointsCard({
+    required this.strings,
+    required this.points,
+    required this.canSync,
+    required this.submitting,
+    required this.onSync,
+    required this.theme,
+  });
+
+  final Strings strings;
+  final int points;
+  final bool canSync;
+  final bool submitting;
+  final VoidCallback onSync;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              strings.rankingPointsTitle,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  Strings.formatNumber(points),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 3),
+                  child: Text(
+                    strings.points.toLowerCase(),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              strings.rankingPointsNote,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: canSync && !submitting ? onSync : null,
+                icon: submitting
+                    ? const SizedBox.square(
+                        dimension: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.cloud_upload_outlined),
+                label: Text(strings.rankingSyncPoints),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GeneralList extends StatelessWidget {
+  const _GeneralList({
+    required this.ranking,
+    required this.strings,
+    required this.theme,
+  });
+
+  final GeneralRanking? ranking;
+  final Strings strings;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    final entries = ranking?.entries ?? const <GeneralEntry>[];
+    final my = ranking?.my;
+    final showMy = my != null && !entries.any((entry) => entry.me);
+
+    if (entries.isEmpty) {
+      return _EmptyCard(text: strings.rankingEmptyGeneral, theme: theme);
+    }
+
+    return Column(
+      children: [
+        for (final entry in entries)
+          _GeneralTile(entry: entry, strings: strings, theme: theme),
+        if (showMy) ...[
+          const SizedBox(height: 8),
+          _MyGeneralTile(entry: my, strings: strings, theme: theme),
+        ],
+      ],
+    );
+  }
+}
+
+class _GeneralTile extends StatelessWidget {
+  const _GeneralTile({
+    required this.entry,
+    required this.strings,
+    required this.theme,
+  });
+
+  final GeneralEntry entry;
+  final Strings strings;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: entry.me
+          ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
+          : null,
+      child: ListTile(
+        leading: _RankBadge(rank: entry.rank, theme: theme),
+        title: Text(
+          entry.nickname,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${Strings.formatNumber(entry.points)} ${strings.points.toLowerCase()}',
+        ),
+        trailing: entry.me
+            ? Icon(Icons.person_outline, color: theme.colorScheme.primary)
+            : null,
+      ),
+    );
+  }
+}
+
+class _MyGeneralTile extends StatelessWidget {
+  const _MyGeneralTile({
+    required this.entry,
+    required this.strings,
+    required this.theme,
+  });
+
+  final GeneralEntry? entry;
+  final Strings strings;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = entry;
+    if (value == null) return const SizedBox.shrink();
+    return Card(
+      color: theme.colorScheme.secondaryContainer,
+      child: ListTile(
+        leading: _RankBadge(rank: value.rank, theme: theme),
+        title: Text(strings.yourPosition),
+        subtitle: Text(
+          '${value.nickname} · '
+          '${Strings.formatNumber(value.points)} ${strings.points.toLowerCase()}',
         ),
       ),
     );

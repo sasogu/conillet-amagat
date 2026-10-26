@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 — 2026-10-26
+
+- Nueva clasificación **General** por puntos totales de la app (campaña +
+  diario), además del ranking diario e histórico.
+- Los puntos se sincronizan manualmente desde la pestaña General; el servidor
+  guarda el apodo, el identificador y el total.
+- Backend: campo `points` en `players` y endpoints `/api/conillet/points` y
+  `/api/conillet/general`.
+
 ## 0.7.0 — 2026-10-26
 
 - **Ranking opcional** del puzle diario entre dispositivos: top 20 del día y

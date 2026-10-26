@@ -108,6 +108,7 @@ routerAdd("POST", "/api/conillet/submit", (e) => {
       player.set("nickname", nickname);
       player.set("total", 0);
       player.set("days", 0);
+      player.set("points", 0);
     } else {
       player.set("nickname", nickname);
     }
@@ -283,6 +284,140 @@ routerAdd("GET", "/api/conillet/history", (e) => {
         total: total,
         days: days,
       };
+    } catch (_) {
+      my = null;
+    }
+  }
+
+  return e.json(200, { entries: entries, my: my });
+});
+
+routerAdd("POST", "/api/conillet/points", (e) => {
+  function text(value) {
+    return String(value === undefined || value === null ? "" : value).trim();
+  }
+
+  function validNickname(nickname) {
+    const nickRe = /^[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñÇçÀÈÌÒÙàèìòù _.-]{3,16}$/;
+    const badWords = [
+      "puta",
+      "puto",
+      "mierda",
+      "cabron",
+      "cabrón",
+      "gilipollas",
+      "coño",
+      "zorra",
+      "marica",
+      "maricón",
+      "pendejo",
+      "verga",
+      "fuck",
+      "shit",
+      "bitch",
+      "nazi",
+      "hitler",
+    ];
+    if (!nickRe.test(nickname)) return false;
+    const lower = nickname.toLowerCase();
+    return !badWords.some((word) => lower.indexOf(word) !== -1);
+  }
+
+  const deviceRe = /^[A-Za-z0-9-]{16,64}$/;
+  const body = e.requestInfo().body || {};
+  const deviceId = text(body.deviceId);
+  const nickname = text(body.nickname).replace(/\s+/g, " ");
+  const points = Number(body.points);
+
+  if (!deviceRe.test(deviceId)) {
+    throw new BadRequestError("Identificador de dispositivo no válido.");
+  }
+  if (!validNickname(nickname)) {
+    throw new BadRequestError(
+      "El apodo debe tener entre 3 y 16 caracteres y usar letras, números, espacios, puntos, guiones o guiones bajos.",
+    );
+  }
+  if (
+    !Number.isFinite(points) ||
+    points < 0 ||
+    points > 1000000000 ||
+    points !== Math.floor(points)
+  ) {
+    throw new BadRequestError("Puntuación total no válida.");
+  }
+
+  e.app.runInTransaction((txApp) => {
+    let player = null;
+    try {
+      player = txApp.findFirstRecordByData("players", "device_id", deviceId);
+    } catch (_) {
+      player = null;
+    }
+    if (!player) {
+      const collection = txApp.findCollectionByNameOrId("players");
+      player = new Record(collection);
+      player.set("device_id", deviceId);
+      player.set("nickname", nickname);
+      player.set("total", 0);
+      player.set("days", 0);
+      player.set("points", points);
+    } else {
+      player.set("nickname", nickname);
+      player.set("points", points);
+    }
+    txApp.saveNoValidate(player);
+  });
+
+  return e.json(200, { ok: true, points: points });
+});
+
+routerAdd("GET", "/api/conillet/general", (e) => {
+  function text(value) {
+    return String(value === undefined || value === null ? "" : value).trim();
+  }
+
+  const query = e.requestInfo().query || {};
+  const deviceId = text(query.deviceId);
+
+  const records = e.app.findRecordsByFilter(
+    "players",
+    "points > 0",
+    "-points,-total",
+    20,
+    0,
+  );
+  const entries = [];
+  let rank = 0;
+  for (const record of records) {
+    rank += 1;
+    entries.push({
+      rank: rank,
+      nickname: record.getString("nickname"),
+      points: record.getInt("points"),
+      me: !!deviceId && record.getString("device_id") === deviceId,
+    });
+  }
+
+  let my = null;
+  if (deviceId) {
+    try {
+      const record = e.app.findFirstRecordByData("players", "device_id", deviceId);
+      const points = record.getInt("points");
+      if (points > 0) {
+        const total = record.getInt("total");
+        const better = e.app.countRecords(
+          "players",
+          $dbx.exp(
+            "points > 0 AND (points > {:points} OR (points = {:points} AND total > {:total}))",
+            { points: points, total: total },
+          ),
+        );
+        my = {
+          rank: better + 1,
+          nickname: record.getString("nickname"),
+          points: points,
+        };
+      }
     } catch (_) {
       my = null;
     }

@@ -62,7 +62,12 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
   el VPS aulessocarrades (127.0.0.1:8096) y publicada con nginx en
   `/conillet-api/`. Código y despliegue en `server/`.
 - El servidor valida la fórmula de puntos, el tamaño según el día, la fecha
-  (±1 día UTC), el apodo y devuelve top 20 diario/histórico.
+  (±1 día UTC), el apodo y devuelve top 20 diario/histórico. La clasificación
+  **General** usa `players.points` y se sincroniza manualmente desde la app con
+  `POST /api/conillet/points`; `GET /api/conillet/general` devuelve el top 20.
+- Los puntos generales son los `StatsData.points` locales (campaña + diario);
+  no se envían automáticamente. El histórico sigue siendo la suma de marcas
+  diarias (`players.total`/`days`).
 - Identidad: `playerId` aleatorio en `ronron.player.id` y apodo en
   `SettingsData.nickname`. El mejor resultado diario se guarda en
   `StatsData.lastDaily*`.

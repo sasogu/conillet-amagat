@@ -106,6 +106,43 @@ class HistoryRanking {
   );
 }
 
+class GeneralEntry {
+  const GeneralEntry({
+    required this.rank,
+    required this.nickname,
+    required this.points,
+    required this.me,
+  });
+
+  final int rank;
+  final String nickname;
+  final int points;
+  final bool me;
+
+  factory GeneralEntry.fromJson(Map<String, Object?> json) => GeneralEntry(
+    rank: (json['rank'] as num?)?.toInt() ?? 0,
+    nickname: json['nickname'] as String? ?? '',
+    points: (json['points'] as num?)?.toInt() ?? 0,
+    me: json['me'] as bool? ?? false,
+  );
+}
+
+class GeneralRanking {
+  const GeneralRanking({required this.entries, required this.my});
+
+  final List<GeneralEntry> entries;
+  final GeneralEntry? my;
+
+  factory GeneralRanking.fromJson(Map<String, Object?> json) => GeneralRanking(
+    entries: ((json['entries'] as List?) ?? const [])
+        .map((value) => GeneralEntry.fromJson((value as Map).cast()))
+        .toList(growable: false),
+    my: json['my'] is Map
+        ? GeneralEntry.fromJson((json['my'] as Map).cast())
+        : null,
+  );
+}
+
 class SubmitResult {
   const SubmitResult({
     required this.improved,
@@ -181,6 +218,32 @@ class RankingApi {
         .get(_uri('/api/conillet/history', {'deviceId': deviceId}))
         .timeout(_timeout);
     return HistoryRanking.fromJson(_decode(response));
+  }
+
+  Future<void> submitPoints({
+    required String deviceId,
+    required String nickname,
+    required int points,
+  }) async {
+    final response = await _client
+        .post(
+          _uri('/api/conillet/points'),
+          headers: const {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'deviceId': deviceId,
+            'nickname': nickname,
+            'points': points,
+          }),
+        )
+        .timeout(_timeout);
+    _decode(response);
+  }
+
+  Future<GeneralRanking> general({required String deviceId}) async {
+    final response = await _client
+        .get(_uri('/api/conillet/general', {'deviceId': deviceId}))
+        .timeout(_timeout);
+    return GeneralRanking.fromJson(_decode(response));
   }
 
   Map<String, Object?> _decode(http.Response response) {

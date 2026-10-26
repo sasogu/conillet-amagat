@@ -4,11 +4,14 @@ API del ranking de Conillet amagat con PocketBase 0.40.6.
 
 - URL pública: `https://samuelsoriano.es/conillet-api`
 - PocketBase escucha en `127.0.0.1:8096`; nginx publica `/conillet-api/`.
-- Colecciones: `players` y `daily_scores` (sin API pública directa).
+- Colecciones: `players` (total diario, días y puntos generales) y
+  `daily_scores` (sin API pública directa).
 - Endpoints propios:
   - `POST /api/conillet/submit`
   - `GET /api/conillet/daily?day=YYYY-MM-DD&deviceId=...`
   - `GET /api/conillet/history?deviceId=...`
+  - `POST /api/conillet/points` (puntos totales de la app)
+  - `GET /api/conillet/general?deviceId=...`
   - `GET /api/conillet/health`
 - Validación: fórmula de puntos, tamaño según el día de la semana, fecha dentro de
   hoy/ayer/mañana (UTC, para cubrir husos horarios), apodo de 3–16 caracteres y

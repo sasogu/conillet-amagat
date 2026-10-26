@@ -33,6 +33,18 @@ class Strings {
   String get ranking => 'Ranking';
   String get rankingToday => catalan ? 'Hui' : 'Hoy';
   String get rankingHistory => catalan ? 'Històric' : 'Histórico';
+  String get rankingGeneral => catalan ? 'General' : 'General';
+  String get rankingPointsTitle =>
+      catalan ? 'Els teus punts totals' : 'Tus puntos totales';
+  String get rankingPointsNote => catalan
+      ? 'Inclouen la campanya i el diari. S\'envien a la classificació general.'
+      : 'Incluyen la campaña y el diario. Se envían a la clasificación general.';
+  String get rankingSyncPoints =>
+      catalan ? 'Envia els meus punts' : 'Enviar mis puntos';
+  String get rankingPointsSent =>
+      catalan ? 'Punts enviats' : 'Puntos enviados';
+  String get rankingEmptyGeneral =>
+      catalan ? 'Encara no hi ha punts.' : 'Todavía no hay puntos.';
   String get rankingJoinTitle =>
       catalan ? 'Entra en la classificació' : 'Entra en el ranking';
   String get nickname => catalan ? 'Sobrenom' : 'Apodo';
@@ -44,8 +56,8 @@ class Strings {
   String get saveNickname => catalan ? 'Guardar' : 'Guardar';
   String get rankingJoin => catalan ? 'Participar' : 'Participar';
   String get rankingPrivacy => catalan
-      ? 'Només s\'envien el sobrenom, un identificador aleatori i la marca. Sense comptes ni correu.'
-      : 'Solo se envían el apodo, un identificador aleatorio y la marca. Sin cuentas ni correo.';
+      ? 'Només s\'envien el sobrenom, un identificador aleatori, la marca del diari i els punts totals si uses la classificació general. Sense comptes ni correu.'
+      : 'Solo se envían el apodo, un identificador aleatorio, la marca del diario y los puntos totales si usas la clasificación general. Sin cuentas ni correo.';
   String get rankingDailyResult =>
       catalan ? 'La teua marca de hui' : 'Tu marca de hoy';
   String get rankingNoDaily => catalan
