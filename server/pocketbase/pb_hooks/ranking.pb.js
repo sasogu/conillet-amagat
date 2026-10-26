@@ -136,7 +136,7 @@ routerAdd("POST", "/api/conillet/submit", (e) => {
       daily.set("size", size);
       player.set("total", player.getInt("total") + score);
       player.set("days", player.getInt("days") + 1);
-      txApp.save(daily);
+      txApp.saveNoValidate(daily);
       improved = true;
     } else {
       const oldScore = daily.getInt("score");
@@ -154,10 +154,10 @@ routerAdd("POST", "/api/conillet/submit", (e) => {
         daily.set("size", size);
       }
       daily.set("nickname", nickname);
-      txApp.save(daily);
+      txApp.saveNoValidate(daily);
     }
 
-    txApp.save(player);
+    txApp.saveNoValidate(player);
     total = player.getInt("total");
   });
 
