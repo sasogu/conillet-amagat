@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 — 2026-10-26
+
+- Nuevo aspecto **Lila** en Aspectos, con un precio de 40 zanahorias.
+
 ## 0.8.0 — 2026-10-26
 
 - Nueva clasificación **General** por puntos totales de la app (campaña +

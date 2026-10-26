@@ -46,11 +46,11 @@ también puede usar el ranking opcional, con la API en
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.8.0.apk`
+- APK universal firmado: `conillet-amagat-0.8.1.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.8.0.apk`.
+  `adb install conillet-amagat-0.8.1.apk`.
 
 El juego funciona sin conexión y guarda el progreso en el dispositivo. El
 ranking es opcional: solo usa Internet si decides participar y enviar tu
@@ -99,7 +99,7 @@ marca.
 - **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
 - **Puntos y zanahorias**: puntuación por tiempo y vidas conservadas, con
   contadores acumulados en la portada. Las zanahorias sirven para revivir.
-- **Aspectos de conejo**: cinco colores desbloqueables con zanahorias.
+- **Aspectos de conejo**: seis colores desbloqueables con zanahorias.
 - **Tutorial de primera vez** y acceso a «Cómo jugar» desde ajustes.
 - **Ranking opcional**: top 20 diario, histórico por suma de marcas y general
   por puntos totales (campaña + diario), con apodo e identificador anónimo y

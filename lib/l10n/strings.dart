@@ -93,6 +93,7 @@ class Strings {
     'brown' => catalan ? 'Marró' : 'Marrón',
     'night' => catalan ? 'Nocturn' : 'Nocturno',
     'carrot' => catalan ? 'Pastanaga' : 'Zanahoria',
+    'lilac' => 'Lila',
     _ => catalan ? 'Blanc' : 'Blanco',
   };
   String notEnoughCarrots(int cost) => catalan

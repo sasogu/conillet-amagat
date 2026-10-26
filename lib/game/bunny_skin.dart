@@ -61,6 +61,14 @@ const bunnySkins = [
     outline: Color(0x8C5A3A22),
     cost: 25,
   ),
+  BunnySkin(
+    id: 'lilac',
+    body: Color(0xFFC9A7E8),
+    eye: Color(0xFF3A2B4A),
+    innerEar: Color(0xFFE8A7C4),
+    outline: Color(0x8C3A2B4A),
+    cost: 40,
+  ),
 ];
 
 BunnySkin skinById(String? id) => bunnySkins.firstWhere(

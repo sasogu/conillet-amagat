@@ -23,6 +23,16 @@ void main() {
     expect(app.skin.id, 'white');
   });
 
+  test('el conejo lila cuesta 40 zanahorias', () async {
+    final app = await createApp();
+    app.stats.carrots = 50;
+    await app.store.writeStats(app.stats);
+    expect(await app.unlockSkin('lilac'), isTrue);
+    expect(app.selectedSkin, 'lilac');
+    expect(app.stats.carrots, 10);
+    expect(app.skin.body.toARGB32(), 0xFFC9A7E8);
+  });
+
   test('desbloquear un aspecto gasta zanahorias y lo equipa', () async {
     final app = await createApp();
     app.stats.carrots = 20;
