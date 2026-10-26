@@ -37,21 +37,24 @@ como PWA. El progreso se guarda en el navegador del dispositivo y el juego
 funciona sin conexión tras la primera carga.
 
 El despliegue es automático al hacer push a `main` mediante
-`.github/workflows/web.yml` (GitHub Pages, ruta `/ronron/`).
+`.github/workflows/web.yml` (GitHub Pages, ruta `/ronron/`). La versión web
+también puede usar el ranking opcional, con la API en
+`https://samuelsoriano.es/conillet-api`.
 
 ## Descargar
 
 La versión de prueba está en
 [Releases](https://github.com/sasogu/ronron/releases):
 
-- APK universal firmado: `conillet-amagat-0.6.0.apk`
+- APK universal firmado: `conillet-amagat-0.7.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.6.0.apk`.
+  `adb install conillet-amagat-0.7.0.apk`.
 
-La aplicación no pide permisos, no usa Internet y guarda todo en el propio
-dispositivo.
+El juego funciona sin conexión y guarda el progreso en el dispositivo. El
+ranking es opcional: solo usa Internet si decides participar y enviar tu
+marca.
 
 ## Cómo se juega
 
@@ -73,6 +76,9 @@ dispositivo.
 - **Progresión rápida**: resolver sin perder vidas y dentro del tiempo objetivo
   (30 s por casilla de lado) avanza 2 etapas; si además no se usan pistas y se
   baja del 60 % de ese tiempo, avanza 3.
+- **Ranking opcional**: al resolver el puzle diario puedes enviar tu marca y
+  competir en la clasificación diaria y en la histórica entre dispositivos.
+  Solo se envía el apodo, un identificador aleatorio y la marca.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
 - Al resolver un puzle se suman **puntos** según el tamaño, el tiempo empleado
@@ -93,10 +99,13 @@ dispositivo.
   contadores acumulados en la portada. Las zanahorias sirven para revivir.
 - **Aspectos de conejo**: cinco colores desbloqueables con zanahorias.
 - **Tutorial de primera vez** y acceso a «Cómo jugar» desde ajustes.
+- **Ranking opcional** del puzle diario (top 20 diario e histórico), con apodo
+  e identificador anónimo y validación en el servidor.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.
-- Sin anuncios, sin compras, sin cuentas, sin telemetría y sin conexión.
+- Sin anuncios, sin compras, sin cuentas ni telemetría. El juego funciona sin
+  conexión; el ranking es opcional y requiere Internet.
 - Código y puzles libres (GPL-3.0).
 
 ## Desarrollo
@@ -130,10 +139,12 @@ lib/
   game/campaign.dart       etapas, tamaños y conejos de pista
   game/scoring.dart        puntos y zanahorias por puzle
   game/bunny_skin.dart     colores y precios de los conejos
+  ranking/                 cliente HTTP, identidad y modelos del ranking
   game/game_controller.dart  estado de la partida
   ui/                      portada, tablero, partida, tutorial, aspectos y ajustes
 assets/puzzles.json        lote verificado de puzles
 web/                       PWA: manifiesto, iconos y pantalla de carga
+server/                    PocketBase, migraciones, hooks, systemd y nginx
 tool/                      generación y verificación del lote
 test/                      pruebas de lógica, controlador e interfaz
 ```

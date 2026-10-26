@@ -9,6 +9,7 @@ import 'game/bunny_skin.dart';
 import 'game/puzzle.dart';
 import 'game/scoring.dart';
 import 'l10n/strings.dart';
+import 'ranking/player_id.dart';
 
 class AppState extends ChangeNotifier {
   AppState({required this.store, required this.repository}) {
@@ -19,6 +20,11 @@ class AppState extends ChangeNotifier {
     tutorialSeen = store.readTutorialSeen();
     unlockedSkins = store.readUnlockedSkins();
     selectedSkin = _validSkin(store.readSelectedSkin());
+    playerId = store.readPlayerId();
+    if (playerId.isEmpty) {
+      playerId = generatePlayerId();
+      unawaited(store.writePlayerId(playerId));
+    }
   }
 
   final GameStore store;
@@ -31,8 +37,11 @@ class AppState extends ChangeNotifier {
   late bool tutorialSeen;
   late Set<String> unlockedSkins;
   late String selectedSkin;
+  late String playerId;
 
   BunnySkin get skin => skinById(selectedSkin);
+
+  String get nickname => settings.nickname.trim();
 
   Strings get strings => Strings(catalan: settings.language == 'ca');
 
@@ -80,6 +89,12 @@ class AppState extends ChangeNotifier {
     await store.writeSelectedSkin(id);
     notifyListeners();
     return true;
+  }
+
+  Future<void> setNickname(String value) async {
+    settings = settings.copyWith(nickname: value.trim());
+    await store.writeSettings(settings);
+    notifyListeners();
   }
 
   Future<void> markTutorialSeen() async {
@@ -152,12 +167,24 @@ class AppState extends ChangeNotifier {
 
     if (mode == 'daily') {
       final today = _dayKey(date);
-      if (stats.lastDaily != today) {
+      final sameDay = stats.lastDaily == today;
+      if (!sameDay) {
         final yesterday = _dayKey(date.subtract(const Duration(days: 1)));
         stats.dailyStreak = stats.lastDaily == yesterday
             ? stats.dailyStreak + 1
             : 1;
         stats.lastDaily = today;
+        stats.lastDailyScore = score.points;
+        stats.lastDailySeconds = seconds;
+        stats.lastDailyLives = lives;
+        stats.lastDailySize = puzzle.size;
+      } else if (score.points > stats.lastDailyScore ||
+          (score.points == stats.lastDailyScore &&
+              seconds < stats.lastDailySeconds)) {
+        stats.lastDailyScore = score.points;
+        stats.lastDailySeconds = seconds;
+        stats.lastDailyLives = lives;
+        stats.lastDailySize = puzzle.size;
       }
     } else {
       final completed = math.max(
@@ -186,6 +213,8 @@ class AppState extends ChangeNotifier {
 
   static int dateKey(DateTime date) =>
       date.year * 10000 + date.month * 100 + date.day;
+
+  static String dayKeyString(DateTime date) => _dayKey(date);
 
   static String _dayKey(DateTime date) {
     final month = date.month.toString().padLeft(2, '0');

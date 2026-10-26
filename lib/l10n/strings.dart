@@ -30,6 +30,48 @@ class Strings {
       catalan ? 'Totes les etapes completades' : 'Todas las etapas completadas';
   String get settings => catalan ? 'Ajustos' : 'Ajustes';
   String get howToPlay => catalan ? 'Com jugar' : 'Cómo jugar';
+  String get ranking => 'Ranking';
+  String get rankingToday => catalan ? 'Hui' : 'Hoy';
+  String get rankingHistory => catalan ? 'Històric' : 'Histórico';
+  String get rankingJoinTitle =>
+      catalan ? 'Entra en la classificació' : 'Entra en el ranking';
+  String get nickname => catalan ? 'Sobrenom' : 'Apodo';
+  String get nicknameHint =>
+      catalan ? 'Entre 3 i 16 caràcters' : 'Entre 3 y 16 caracteres';
+  String get nicknameInvalid => catalan
+      ? 'El sobrenom ha de tindre entre 3 i 16 caràcters i no pot contindre paraules ofensives.'
+      : 'El apodo debe tener entre 3 y 16 caracteres y no puede contener palabras ofensivas.';
+  String get saveNickname => catalan ? 'Guardar' : 'Guardar';
+  String get rankingJoin => catalan ? 'Participar' : 'Participar';
+  String get rankingPrivacy => catalan
+      ? 'Només s\'envien el sobrenom, un identificador aleatori i la marca. Sense comptes ni correu.'
+      : 'Solo se envían el apodo, un identificador aleatorio y la marca. Sin cuentas ni correo.';
+  String get rankingDailyResult =>
+      catalan ? 'La teua marca de hui' : 'Tu marca de hoy';
+  String get rankingNoDaily => catalan
+      ? 'Resol el puzle diari per a entrar en la classificació.'
+      : 'Resuelve el puzle diario para entrar en el ranking.';
+  String get rankingSubmit =>
+      catalan ? 'Enviar al rànquing' : 'Enviar al ranking';
+  String get rankingUpdate =>
+      catalan ? 'Actualitzar marca' : 'Actualizar marca';
+  String get rankingSent => catalan ? 'Marca enviada' : 'Marca enviada';
+  String get rankingError => catalan
+      ? 'No s\'ha pogut connectar amb el rànquing.'
+      : 'No se pudo conectar con el ranking.';
+  String get retry => catalan ? 'Reintentar' : 'Reintentar';
+  String get rankingEmptyDaily => catalan
+      ? 'Encara no hi ha marques hui.'
+      : 'Todavía no hay marcas hoy.';
+  String get rankingEmptyHistory => catalan
+      ? 'Encara no hi ha cap marca.'
+      : 'Todavía no hay ninguna marca.';
+  String get yourPosition => catalan ? 'La teua posició' : 'Tu posición';
+  String get playingAs => catalan ? 'Jugant com a' : 'Jugando como';
+  String get editNickname =>
+      catalan ? 'Canviar sobrenom' : 'Cambiar apodo';
+  String get nicknameSaved =>
+      catalan ? 'Sobrenom guardat' : 'Apodo guardado';
   String get appearance => catalan ? 'Aspectes' : 'Aspectos';
   String get skinSelected => catalan ? 'En ús' : 'En uso';
   String get skinChoose => catalan ? 'Triar' : 'Elegir';

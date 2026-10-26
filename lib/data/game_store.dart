@@ -14,27 +14,32 @@ class SettingsData {
   final ThemeMode themeMode;
   final bool autoCross;
   final String language; // 'es' o 'ca'
+  final String nickname;
 
   const SettingsData({
     this.themeMode = ThemeMode.system,
     this.autoCross = true,
     this.language = 'es',
+    this.nickname = '',
   });
 
   SettingsData copyWith({
     ThemeMode? themeMode,
     bool? autoCross,
     String? language,
+    String? nickname,
   }) => SettingsData(
     themeMode: themeMode ?? this.themeMode,
     autoCross: autoCross ?? this.autoCross,
     language: language ?? this.language,
+    nickname: nickname ?? this.nickname,
   );
 
   Map<String, Object?> toJson() => {
     'theme': themeMode.name,
     'autoCross': autoCross,
     'language': language,
+    'nickname': nickname,
   };
 
   factory SettingsData.fromJson(Map<String, Object?> json) => SettingsData(
@@ -44,6 +49,7 @@ class SettingsData {
     ),
     autoCross: json['autoCross'] as bool? ?? true,
     language: json['language'] as String? ?? 'es',
+    nickname: json['nickname'] as String? ?? '',
   );
 }
 
@@ -55,6 +61,10 @@ class StatsData {
   int hintsUsed;
   int points;
   int carrots;
+  int lastDailyScore;
+  int lastDailySeconds;
+  int lastDailyLives;
+  int lastDailySize;
 
   StatsData({
     this.solved = 0,
@@ -64,6 +74,10 @@ class StatsData {
     this.hintsUsed = 0,
     this.points = 0,
     this.carrots = 0,
+    this.lastDailyScore = 0,
+    this.lastDailySeconds = 0,
+    this.lastDailyLives = 0,
+    this.lastDailySize = 0,
   }) : solvedBySize = solvedBySize ?? {};
 
   Map<String, Object?> toJson() => {
@@ -76,6 +90,10 @@ class StatsData {
     'hintsUsed': hintsUsed,
     'points': points,
     'carrots': carrots,
+    'lastDailyScore': lastDailyScore,
+    'lastDailySeconds': lastDailySeconds,
+    'lastDailyLives': lastDailyLives,
+    'lastDailySize': lastDailySize,
   };
 
   factory StatsData.fromJson(Map<String, Object?> json) {
@@ -95,6 +113,10 @@ class StatsData {
       hintsUsed: (json['hintsUsed'] as num?)?.toInt() ?? 0,
       points: (json['points'] as num?)?.toInt() ?? 0,
       carrots: (json['carrots'] as num?)?.toInt() ?? 0,
+      lastDailyScore: (json['lastDailyScore'] as num?)?.toInt() ?? 0,
+      lastDailySeconds: (json['lastDailySeconds'] as num?)?.toInt() ?? 0,
+      lastDailyLives: (json['lastDailyLives'] as num?)?.toInt() ?? 0,
+      lastDailySize: (json['lastDailySize'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -160,6 +182,7 @@ class GameStore {
   static const _tutorialKey = 'ronron.tutorial.v1';
   static const _skinsKey = 'ronron.skins.unlocked';
   static const _selectedSkinKey = 'ronron.skins.selected';
+  static const _playerIdKey = 'ronron.player.id';
 
   SettingsData readSettings() {
     final raw = _prefs.getString(_settingsKey);
@@ -240,4 +263,8 @@ class GameStore {
 
   Future<void> writeSelectedSkin(String id) =>
       _prefs.setString(_selectedSkinKey, id);
+
+  String readPlayerId() => _prefs.getString(_playerIdKey) ?? '';
+
+  Future<void> writePlayerId(String id) => _prefs.setString(_playerIdKey, id);
 }

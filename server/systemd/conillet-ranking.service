@@ -1,0 +1,21 @@
+[Unit]
+Description=Conillet amagat ranking API (PocketBase)
+After=network.target
+
+[Service]
+Type=simple
+User=conillet
+Group=conillet
+WorkingDirectory=/opt/conillet-ranking
+EnvironmentFile=-/etc/conillet-ranking.env
+ExecStart=/opt/conillet-ranking/pocketbase serve --http=127.0.0.1:8096
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/conillet-ranking/pb_data
+
+[Install]
+WantedBy=multi-user.target

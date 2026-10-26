@@ -403,6 +403,55 @@ void main() {
     expect(controller.failed, isFalse);
   });
 
+  test('el resultado diario guarda la mejor marca del día', () async {
+    final harness = await createHarness();
+    final app = harness.app;
+    harness.controller.dispose();
+    final puzzle = app.repository.levelPuzzle(6, 1);
+    final now = DateTime(2026, 10, 20, 10);
+
+    await app.recordCompletion(
+      puzzle: puzzle,
+      mode: 'daily',
+      levelIndex: AppState.dateKey(now),
+      hintsUsed: 0,
+      seconds: 200,
+      lives: 1,
+      now: now,
+    );
+    expect(app.stats.lastDaily, AppState.dayKeyString(now));
+    expect(app.stats.lastDailySeconds, 200);
+    expect(app.stats.lastDailyLives, 1);
+    final firstScore = app.stats.lastDailyScore;
+    expect(firstScore, greaterThan(0));
+
+    await app.recordCompletion(
+      puzzle: puzzle,
+      mode: 'daily',
+      levelIndex: AppState.dateKey(now),
+      hintsUsed: 0,
+      seconds: 30,
+      lives: 3,
+      now: now.add(const Duration(hours: 1)),
+    );
+    expect(app.stats.lastDailyScore, greaterThan(firstScore));
+    expect(app.stats.lastDailySeconds, 30);
+    expect(app.stats.lastDailyLives, 3);
+
+    final best = app.stats.lastDailyScore;
+    await app.recordCompletion(
+      puzzle: puzzle,
+      mode: 'daily',
+      levelIndex: AppState.dateKey(now),
+      hintsUsed: 0,
+      seconds: 300,
+      lives: 0,
+      now: now.add(const Duration(hours: 2)),
+    );
+    expect(app.stats.lastDailyScore, best);
+    expect(app.stats.lastDailySeconds, 30);
+  });
+
   test(
     'la racha diaria solo cuenta una vez al día y exige días consecutivos',
     () async {

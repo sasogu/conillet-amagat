@@ -54,6 +54,24 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
   castellano y valenciano.
 - No comentar el código salvo que sea imprescindible.
 
+## Ranking
+
+- Ranking opcional del puzle diario. La app no envía nada automáticamente: el
+  jugador pulsa «Enviar al ranking» en `lib/ui/ranking_page.dart`.
+- API: `https://samuelsoriano.es/conillet-api`, servida por PocketBase 0.40.6 en
+  el VPS aulessocarrades (127.0.0.1:8096) y publicada con nginx en
+  `/conillet-api/`. Código y despliegue en `server/`.
+- El servidor valida la fórmula de puntos, el tamaño según el día, la fecha
+  (±1 día UTC), el apodo y devuelve top 20 diario/histórico.
+- Identidad: `playerId` aleatorio en `ronron.player.id` y apodo en
+  `SettingsData.nickname`. El mejor resultado diario se guarda en
+  `StatsData.lastDaily*`.
+- No hay cuentas ni secretos en la app. La contraseña del panel PocketBase está
+  en `pass conillet/ranking-admin` y el panel está bloqueado desde Internet;
+  se accede por túnel SSH. No mostrar credenciales.
+- El APK incluye el permiso normal INTERNET por el ranking; el resto del juego
+  debe seguir funcionando offline.
+
 ## Web
 
 - La web se publica en https://sasogu.github.io/ronron/ con GitHub Pages.

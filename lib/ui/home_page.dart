@@ -11,6 +11,7 @@ import 'bunny_art.dart';
 import 'carrot_icon.dart';
 import 'game_page.dart';
 import 'how_to_play.dart';
+import 'ranking_page.dart';
 import 'settings_sheet.dart';
 
 class HomePage extends StatelessWidget {
@@ -170,6 +171,15 @@ class _Header extends StatelessWidget {
               ),
             ],
           ),
+        ),
+        IconButton(
+          tooltip: strings.ranking,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => RankingPage(app: AppScope.of(context)),
+            ),
+          ),
+          icon: const Icon(Icons.leaderboard_outlined),
         ),
         IconButton(
           tooltip: strings.settings,

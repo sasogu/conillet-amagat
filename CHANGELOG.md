@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.0 — 2026-10-26
+
+- **Ranking opcional** del puzle diario entre dispositivos: top 20 del día y
+  clasificación histórica por suma de marcas diarias.
+- Apodo elegido e identificador aleatorio; sin cuentas ni correo. El envío es
+  manual desde la pantalla de ranking y solo se manda al resolver el diario.
+- Validación en el servidor de puntos, tiempo, vidas, tamaño, fecha y apodo.
+- Backend PocketBase en el VPS y API HTTPS en
+  `https://samuelsoriano.es/conillet-api`; código en `server/`.
+- Nuevo permiso normal de Internet en Android para el ranking opcional. El
+  juego y el guardado siguen funcionando sin conexión.
+
 ## Web — 2026-10-25
 
 - Versión web publicada en GitHub Pages: https://sasogu.github.io/ronron/
