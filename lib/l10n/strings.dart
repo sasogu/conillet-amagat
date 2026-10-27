@@ -41,8 +41,7 @@ class Strings {
       : 'Incluyen la campaña y el diario. Se envían a la clasificación general.';
   String get rankingSyncPoints =>
       catalan ? 'Envia els meus punts' : 'Enviar mis puntos';
-  String get rankingPointsSent =>
-      catalan ? 'Punts enviats' : 'Puntos enviados';
+  String get rankingPointsSent => catalan ? 'Punts enviats' : 'Puntos enviados';
   String get rankingEmptyGeneral =>
       catalan ? 'Encara no hi ha punts.' : 'Todavía no hay puntos.';
   String get rankingJoinTitle =>
@@ -72,18 +71,14 @@ class Strings {
       ? 'No s\'ha pogut connectar amb el rànquing.'
       : 'No se pudo conectar con el ranking.';
   String get retry => catalan ? 'Reintentar' : 'Reintentar';
-  String get rankingEmptyDaily => catalan
-      ? 'Encara no hi ha marques hui.'
-      : 'Todavía no hay marcas hoy.';
-  String get rankingEmptyHistory => catalan
-      ? 'Encara no hi ha cap marca.'
-      : 'Todavía no hay ninguna marca.';
+  String get rankingEmptyDaily =>
+      catalan ? 'Encara no hi ha marques hui.' : 'Todavía no hay marcas hoy.';
+  String get rankingEmptyHistory =>
+      catalan ? 'Encara no hi ha cap marca.' : 'Todavía no hay ninguna marca.';
   String get yourPosition => catalan ? 'La teua posició' : 'Tu posición';
   String get playingAs => catalan ? 'Jugant com a' : 'Jugando como';
-  String get editNickname =>
-      catalan ? 'Canviar sobrenom' : 'Cambiar apodo';
-  String get nicknameSaved =>
-      catalan ? 'Sobrenom guardat' : 'Apodo guardado';
+  String get editNickname => catalan ? 'Canviar sobrenom' : 'Cambiar apodo';
+  String get nicknameSaved => catalan ? 'Sobrenom guardat' : 'Apodo guardado';
   String get appearance => catalan ? 'Aspectes' : 'Aspectos';
   String get skinSelected => catalan ? 'En ús' : 'En uso';
   String get skinChoose => catalan ? 'Triar' : 'Elegir';
@@ -120,8 +115,7 @@ class Strings {
   String get tutorialFastBody => catalan
       ? 'Resoldre sense perdre vides i dins del temps et fa saltar 2 o 3 etapes.'
       : 'Resolver sin perder vidas y dentro del tiempo te hace saltar 2 o 3 etapas.';
-  String get tutorialCarrotsTitle =>
-      catalan ? 'Pastanagues' : 'Zanahorias';
+  String get tutorialCarrotsTitle => catalan ? 'Pastanagues' : 'Zanahorias';
   String get tutorialCarrotsBody => catalan
       ? 'Cada vida que et sobra es converteix en una pastanaga. Usa-les per a reviure si et quedes sense vides.'
       : 'Cada vida que te sobra se convierte en una zanahoria. Úsalas para revivir si te quedas sin vidas.';
@@ -152,16 +146,14 @@ class Strings {
   String wrongBunny(int remaining) => catalan
       ? 'Conill mal col·locat. Et ${remaining == 1 ? 'queda' : 'queden'} $remaining ${remaining == 1 ? 'vida' : 'vides'}.'
       : 'Conejo mal colocado. Te ${remaining == 1 ? 'queda' : 'quedan'} $remaining ${remaining == 1 ? 'vida' : 'vidas'}.';
-  String fastAdvance(int count) => catalan
-      ? 'Salt ràpid: $count etapes'
-      : 'Salto rápido: $count etapas';
+  String fastAdvance(int count) =>
+      catalan ? 'Salt ràpid: $count etapes' : 'Salto rápido: $count etapas';
   String get noLivesTitle => catalan ? 'Sense vides' : 'Sin vidas';
   String get noLivesBody =>
       catalan ? 'Has esgotat les tres vides.' : 'Has agotado las tres vidas.';
   String get revive => catalan ? 'Reviu' : 'Revivir';
-  String reviveWithCarrots(int cost) => catalan
-      ? 'Reviu · $cost pastanagues'
-      : 'Revivir · $cost zanahorias';
+  String reviveWithCarrots(int cost) =>
+      catalan ? 'Reviu · $cost pastanagues' : 'Revivir · $cost zanahorias';
   String carrotsOwned(int count) => catalan
       ? 'Tens $count ${count == 1 ? 'pastanaga' : 'pastanagues'}'
       : 'Tienes $count ${count == 1 ? 'zanahoria' : 'zanahorias'}';
@@ -195,6 +187,35 @@ class Strings {
   String get language => catalan ? 'Idioma' : 'Idioma';
   String get spanish => catalan ? 'Espanyol' : 'Español';
   String get valencian => 'Valencià';
+  String get progress => catalan ? 'Progrés' : 'Progreso';
+  String get exportProgress =>
+      catalan ? 'Exportar progrés' : 'Exportar progreso';
+  String get exportProgressHint => catalan
+      ? 'Guarda una còpia de seguretat en un fitxer JSON.'
+      : 'Guarda una copia de seguridad en un archivo JSON.';
+  String get importProgress =>
+      catalan ? 'Importar progrés' : 'Importar progreso';
+  String get importProgressHint => catalan
+      ? 'Restaura una còpia i substitueix el progrés actual.'
+      : 'Restaura una copia y sustituye el progreso actual.';
+  String get exportDone => catalan ? 'Còpia exportada.' : 'Copia exportada.';
+  String get exportError => catalan
+      ? 'No s\'ha pogut exportar el progrés.'
+      : 'No se pudo exportar el progreso.';
+  String get importDone =>
+      catalan ? 'Progrés importat.' : 'Progreso importado.';
+  String get importInvalid => catalan
+      ? 'El fitxer no és una còpia vàlida de Conillet amagat.'
+      : 'El archivo no es una copia válida de Conillet amagat.';
+  String get importError => catalan
+      ? 'No s\'ha pogut importar el progrés.'
+      : 'No se pudo importar el progreso.';
+  String get importConfirmTitle =>
+      catalan ? 'Importar este progrés?' : '¿Importar este progreso?';
+  String get importConfirmBody => catalan
+      ? 'Se substituiran les etapes, punts, pastanagues, aspectes i ajustos actuals.'
+      : 'Se sustituirán las etapas, puntos, zanahorias, aspectos y ajustes actuales.';
+  String get importConfirmAction => catalan ? 'Importar' : 'Importar';
   String get about => catalan ? 'Quant a' : 'Acerca de';
   String get aboutText => catalan
       ? 'Un puzle de lògica de conills, sense anuncis, sense connexió i amb codi lliure.'

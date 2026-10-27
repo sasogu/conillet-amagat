@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../app_info.dart';
@@ -89,9 +93,7 @@ class SettingsSheet extends StatelessWidget {
                 final navigator = Navigator.of(context);
                 navigator.pop();
                 navigator.push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => SkinsPage(app: app),
-                  ),
+                  MaterialPageRoute<void>(builder: (_) => SkinsPage(app: app)),
                 );
               },
             ),
@@ -99,8 +101,24 @@ class SettingsSheet extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.help_outline),
               title: Text(strings.howToPlay),
-              onTap: () =>
-                  showHowToPlay(context, onSeen: app.markTutorialSeen),
+              onTap: () => showHowToPlay(context, onSeen: app.markTutorialSeen),
+            ),
+            const Divider(height: 28),
+            Text(strings.progress, style: theme.textTheme.titleSmall),
+            const SizedBox(height: 6),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.upload_file_outlined),
+              title: Text(strings.exportProgress),
+              subtitle: Text(strings.exportProgressHint),
+              onTap: () => _exportProgress(context, app),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.file_download_outlined),
+              title: Text(strings.importProgress),
+              subtitle: Text(strings.importProgressHint),
+              onTap: () => _importProgress(context, app),
             ),
             const Divider(height: 28),
             Text(strings.about, style: theme.textTheme.titleSmall),
@@ -132,5 +150,75 @@ class SettingsSheet extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _fileStamp(DateTime date) {
+  String two(int value) => value.toString().padLeft(2, '0');
+  return '${date.year}${two(date.month)}${two(date.day)}-'
+      '${two(date.hour)}${two(date.minute)}';
+}
+
+Future<void> _exportProgress(BuildContext context, AppState app) async {
+  final strings = app.strings;
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    final json = const JsonEncoder.withIndent(
+      '  ',
+    ).convert(app.store.exportProgress());
+    final path = await FilePicker.saveFile(
+      dialogTitle: strings.exportProgress,
+      fileName: 'conillet-amagat-progres-${_fileStamp(DateTime.now())}.json',
+      type: FileType.custom,
+      allowedExtensions: const ['json'],
+      bytes: Uint8List.fromList(utf8.encode(json)),
+    );
+    if (!kIsWeb && path == null) return;
+    messenger.showSnackBar(SnackBar(content: Text(strings.exportDone)));
+  } catch (_) {
+    messenger.showSnackBar(SnackBar(content: Text(strings.exportError)));
+  }
+}
+
+Future<void> _importProgress(BuildContext context, AppState app) async {
+  final strings = app.strings;
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    final result = await FilePicker.pickFiles(
+      dialogTitle: strings.importProgress,
+      type: FileType.custom,
+      allowedExtensions: const ['json'],
+      withData: true,
+    );
+    if (result == null) return;
+    final bytes = result.files.single.bytes;
+    if (bytes == null) throw const FormatException('Sin datos');
+    final decoded = jsonDecode(utf8.decode(bytes));
+    if (decoded is! Map) throw const FormatException('Sin datos');
+    if (!context.mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.importConfirmTitle),
+        content: Text(strings.importConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(strings.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(strings.importConfirmAction),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await app.importProgress(decoded.cast<String, Object?>());
+    messenger.showSnackBar(SnackBar(content: Text(strings.importDone)));
+  } on FormatException {
+    messenger.showSnackBar(SnackBar(content: Text(strings.importInvalid)));
+  } catch (_) {
+    messenger.showSnackBar(SnackBar(content: Text(strings.importError)));
   }
 }

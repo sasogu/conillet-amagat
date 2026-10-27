@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../app_info.dart';
 import '../game/puzzle.dart';
 
 enum CellMark { none, bunny, cross }
@@ -241,8 +242,7 @@ class GameStore {
 
   int readCampaignStage() => _prefs.getInt(_stageKey) ?? 1;
 
-  Future<void> writeCampaignStage(int stage) =>
-      _prefs.setInt(_stageKey, stage);
+  Future<void> writeCampaignStage(int stage) => _prefs.setInt(_stageKey, stage);
 
   bool readTutorialSeen() => _prefs.getBool(_tutorialKey) ?? false;
 
@@ -267,4 +267,117 @@ class GameStore {
   String readPlayerId() => _prefs.getString(_playerIdKey) ?? '';
 
   Future<void> writePlayerId(String id) => _prefs.setString(_playerIdKey, id);
+
+  static const String progressFormat = 'conillet-amagat.progress';
+  static const int progressVersion = 1;
+
+  Map<String, Object?> exportProgress() {
+    final skins = readUnlockedSkins().toList()..sort();
+    final saved = readGame();
+    return {
+      'format': progressFormat,
+      'version': progressVersion,
+      'exportedAt': DateTime.now().toUtc().toIso8601String(),
+      'appVersion': appVersion,
+      'data': {
+        'settings': readSettings().toJson(),
+        'stats': readStats().toJson(),
+        'campaignStage': readCampaignStage(),
+        'tutorialSeen': readTutorialSeen(),
+        'unlockedSkins': skins,
+        'selectedSkin': readSelectedSkin(),
+        'playerId': readPlayerId(),
+        'completedLevels': {
+          for (final size in supportedSizes) '$size': completedLevels(size),
+        },
+        'savedGame': saved?.toJson(),
+      },
+    };
+  }
+
+  Future<void> importProgress(Map<String, Object?> payload) async {
+    if (payload['format'] != progressFormat) {
+      throw const FormatException('Formato de progreso desconocido');
+    }
+    final version = payload['version'];
+    if (version is! num || version.toInt() != progressVersion) {
+      throw const FormatException('Versión de progreso no compatible');
+    }
+    final rawData = payload['data'];
+    if (rawData is! Map) {
+      throw const FormatException('El archivo no contiene datos de progreso');
+    }
+    final data = rawData.cast<String, Object?>();
+
+    final SettingsData settings;
+    final StatsData stats;
+    try {
+      settings = SettingsData.fromJson(
+        ((data['settings'] as Map?) ?? const {}).cast<String, Object?>(),
+      );
+      stats = StatsData.fromJson(
+        ((data['stats'] as Map?) ?? const {}).cast<String, Object?>(),
+      );
+    } catch (_) {
+      throw const FormatException('Ajustes o estadísticas no válidos');
+    }
+
+    final rawSkins = data['unlockedSkins'];
+    final skins = <String>{'white'};
+    if (rawSkins is List) {
+      for (final id in rawSkins) {
+        if (id is String && id.isNotEmpty) skins.add(id);
+      }
+    }
+    final rawSelected = data['selectedSkin'];
+    final selected = rawSelected is String && skins.contains(rawSelected)
+        ? rawSelected
+        : 'white';
+
+    final levels = <int, int>{for (final size in supportedSizes) size: 0};
+    final rawLevels = data['completedLevels'];
+    if (rawLevels is Map) {
+      for (final size in supportedSizes) {
+        final value = rawLevels['$size'];
+        if (value is num) {
+          levels[size] = value.toInt().clamp(0, 1 << 30).toInt();
+        }
+      }
+    }
+
+    SavedGame? saved;
+    final rawSaved = data['savedGame'];
+    if (rawSaved is Map) {
+      try {
+        final candidate = SavedGame.fromJson(rawSaved.cast<String, Object?>());
+        if (candidate.puzzle.isValid &&
+            candidate.marks.length == candidate.puzzle.cellCount) {
+          saved = candidate;
+        }
+      } catch (_) {
+        saved = null;
+      }
+    }
+
+    final rawStage = data['campaignStage'];
+    final stage = rawStage is num ? rawStage.toInt() : 1;
+    final rawPlayerId = data['playerId'];
+    final playerId = rawPlayerId is String ? rawPlayerId.trim() : '';
+
+    await writeSettings(settings);
+    await writeStats(stats);
+    await writeCampaignStage(stage < 1 ? 1 : stage);
+    await writeTutorialSeen(data['tutorialSeen'] == true);
+    await writeUnlockedSkins(skins);
+    await writeSelectedSkin(selected);
+    if (playerId.isNotEmpty) await writePlayerId(playerId);
+    for (final size in supportedSizes) {
+      await setCompletedLevels(size, levels[size] ?? 0);
+    }
+    if (saved != null) {
+      await writeGame(saved);
+    } else {
+      await clearGame();
+    }
+  }
 }

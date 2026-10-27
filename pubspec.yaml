@@ -1,12 +1,13 @@
 name: conillet_amagat
 description: "Puzle de lógica de conejos: un conejo por fila, columna y región, sin tocarse."
 publish_to: 'none'
-version: 0.8.1+12
+version: 0.8.2+13
 
 environment:
   sdk: ^3.9.2
 
 dependencies:
+  file_picker: ^11.0.3
   flutter:
     sdk: flutter
   flutter_localizations:

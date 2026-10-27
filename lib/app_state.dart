@@ -57,7 +57,17 @@ class AppState extends ChangeNotifier {
     tutorialSeen = store.readTutorialSeen();
     unlockedSkins = store.readUnlockedSkins();
     selectedSkin = _validSkin(store.readSelectedSkin());
+    playerId = store.readPlayerId();
+    if (playerId.isEmpty) {
+      playerId = generatePlayerId();
+      unawaited(store.writePlayerId(playerId));
+    }
     notifyListeners();
+  }
+
+  Future<void> importProgress(Map<String, Object?> payload) async {
+    await store.importProgress(payload);
+    reloadFromStore();
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -66,8 +76,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _validSkin(String id) =>
-      unlockedSkins.contains(id) ? id : 'white';
+  String _validSkin(String id) => unlockedSkins.contains(id) ? id : 'white';
 
   Future<bool> selectSkin(String id) async {
     if (!unlockedSkins.contains(id)) return false;

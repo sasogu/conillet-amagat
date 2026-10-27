@@ -85,6 +85,7 @@ void main() {
     expect(find.text('Ajustos'), findsOneWidget);
     expect(app.settings.language, 'ca');
 
+    await tester.ensureVisible(find.text('Tanca'));
     await tester.tap(find.text('Tanca'));
     await tester.pumpAndSettle();
     expect(find.text('La teva etapa'), findsOneWidget);
@@ -152,7 +153,10 @@ void main() {
     }
 
     await doubleTap(wrongCells[0]);
-    expect(find.text('Conejo mal colocado. Te quedan 2 vidas.'), findsOneWidget);
+    expect(
+      find.text('Conejo mal colocado. Te quedan 2 vidas.'),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(2));
     expect(find.byIcon(Icons.favorite_border_rounded), findsOneWidget);
 
