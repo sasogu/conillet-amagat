@@ -9,7 +9,10 @@ import 'package:conillet_amagat/data/puzzle_repository.dart';
 import 'package:conillet_amagat/ui/board_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<AppState> createApp({bool tutorialSeen = true}) async {
+Future<AppState> createApp({
+  bool tutorialSeen = true,
+  String? language = 'es',
+}) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   final repository = PuzzleRepository.fromJson(
@@ -17,11 +20,36 @@ Future<AppState> createApp({bool tutorialSeen = true}) async {
   );
   final store = GameStore(prefs);
   await store.writeTutorialSeen(tutorialSeen);
-  return AppState(store: store, repository: repository);
+  final app = AppState(store: store, repository: repository);
+  if (language != null) await app.setLanguage(language);
+  return app;
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('inicia en valencià i permet canviar al castellà', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final app = await createApp(language: null);
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
+    await tester.pump();
+    expect(app.settings.language, 'ca');
+    expect(find.text('La teva etapa'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.tune));
+    await tester.pumpAndSettle();
+    expect(find.text('Ajustos'), findsOneWidget);
+    await tester.tap(find.text('Espanyol'));
+    await tester.pumpAndSettle();
+    expect(app.settings.language, 'es');
+    expect(find.text('Ajustes'), findsOneWidget);
+    expect(app.store.readSettings().language, 'es');
+  });
 
   testWidgets('la portada carga y abre la etapa actual', (tester) async {
     tester.view.physicalSize = const Size(430, 900);

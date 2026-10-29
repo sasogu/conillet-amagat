@@ -20,7 +20,7 @@ class SettingsData {
   const SettingsData({
     this.themeMode = ThemeMode.system,
     this.autoCross = true,
-    this.language = 'es',
+    this.language = 'ca',
     this.nickname = '',
   });
 
@@ -49,7 +49,7 @@ class SettingsData {
       orElse: () => ThemeMode.system,
     ),
     autoCross: json['autoCross'] as bool? ?? true,
-    language: json['language'] as String? ?? 'es',
+    language: json['language'] as String? ?? 'ca',
     nickname: json['nickname'] as String? ?? '',
   );
 }

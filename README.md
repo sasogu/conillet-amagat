@@ -104,7 +104,7 @@ marca.
   por puntos totales (campaña + diario), con sincronización automática tras
   participar, apodo e identificador anónimo y validación en el servidor.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
-- Interfaz en **castellano y valenciano**.
+- Interfaz en **valenciano por defecto**, con castellano disponible en Ajustes.
 - Tema **claro, oscuro o según el sistema**.
 - Sin anuncios, sin compras, sin cuentas ni telemetría. El juego funciona sin
   conexión; el ranking es opcional y requiere Internet.

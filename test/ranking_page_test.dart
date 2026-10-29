@@ -119,12 +119,12 @@ void main() {
     expect(dailySubmissions, greaterThanOrEqualTo(1));
     expect(pointSubmissions, greaterThanOrEqualTo(1));
 
-    await tester.tap(find.text('Volver a sincronizar').first);
+    await tester.tap(find.text('Torna a sincronitzar').first);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Marca enviada'), findsOneWidget);
 
-    await tester.tap(find.text('Histórico'));
+    await tester.tap(find.text('Històric'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('4.500'), findsOneWidget);
@@ -133,10 +133,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('18.450'), findsWidgets);
-    await tester.tap(find.text('Volver a sincronizar').last);
+    await tester.tap(find.text('Torna a sincronitzar').last);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Puntos enviados'), findsOneWidget);
+    expect(find.text('Punts enviats'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump();

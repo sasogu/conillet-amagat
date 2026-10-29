@@ -51,7 +51,8 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 - Respetar el tema Material 3 y la paleta de `lib/theme.dart`; el tablero usa
   las regiones de color como información funcional, no solo decorativa.
 - Textos de interfaz centralizados en `lib/l10n/strings.dart`, siempre en
-  castellano y valenciano.
+  castellano y valenciano. El valenciano es el idioma por defecto; conservar la
+  elección de idioma ya guardada.
 - No comentar el código salvo que sea imprescindible.
 
 ## Ranking

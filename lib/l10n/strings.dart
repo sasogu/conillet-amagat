@@ -87,12 +87,12 @@ class Strings {
     'gray' => catalan ? 'Gris' : 'Gris',
     'brown' => catalan ? 'Marró' : 'Marrón',
     'night' => catalan ? 'Nocturn' : 'Nocturno',
-    'carrot' => catalan ? 'Pastanaga' : 'Zanahoria',
+    'carrot' => catalan ? 'Carlota' : 'Zanahoria',
     'lilac' => 'Lila',
     _ => catalan ? 'Blanc' : 'Blanco',
   };
   String notEnoughCarrots(int cost) => catalan
-      ? 'Et falten pastanagues: aquest aspecte costa $cost.'
+      ? 'Et falten carlotes: aquest aspecte costa $cost.'
       : 'Te faltan zanahorias: este aspecto cuesta $cost.';
   String get understood => catalan ? 'Entesos' : 'Entendido';
   String get tutorialTapTitle =>
@@ -115,9 +115,9 @@ class Strings {
   String get tutorialFastBody => catalan
       ? 'Resoldre sense perdre vides i dins del temps et fa saltar 2 o 3 etapes.'
       : 'Resolver sin perder vidas y dentro del tiempo te hace saltar 2 o 3 etapas.';
-  String get tutorialCarrotsTitle => catalan ? 'Pastanagues' : 'Zanahorias';
+  String get tutorialCarrotsTitle => catalan ? 'Carlotes' : 'Zanahorias';
   String get tutorialCarrotsBody => catalan
-      ? 'Cada vida que et sobra es converteix en una pastanaga. Usa-les per a reviure si et quedes sense vides.'
+      ? 'Cada vida que et sobra es converteix en una carlota. Usa-les per a reviure si et quedes sense vides.'
       : 'Cada vida que te sobra se convierte en una zanahoria. Úsalas para revivir si te quedas sin vidas.';
   String get close => catalan ? 'Tanca' : 'Cerrar';
   String get cancel => catalan ? 'Cancel·la' : 'Cancelar';
@@ -153,9 +153,9 @@ class Strings {
 
   String get lives => catalan ? 'Vides' : 'Vidas';
   String get points => catalan ? 'Punts' : 'Puntos';
-  String get carrots => catalan ? 'Pastanagues' : 'Zanahorias';
+  String get carrots => catalan ? 'Carlotes' : 'Zanahorias';
   String carrotsFed(int count) => catalan
-      ? '$count ${count == 1 ? 'pastanaga' : 'pastanagues'} per al conill'
+      ? '$count ${count == 1 ? 'carlota' : 'carlotes'} per al conill'
       : '$count ${count == 1 ? 'zanahoria' : 'zanahorias'} para el conejo';
   String scoreBreakdown(int base, int timeBonus, int livesBonus) => catalan
       ? 'Base ${formatNumber(base)} · Temps ${formatNumber(timeBonus)} · Vides ${formatNumber(livesBonus)}'
@@ -170,12 +170,12 @@ class Strings {
       catalan ? 'Has esgotat les tres vides.' : 'Has agotado las tres vidas.';
   String get revive => catalan ? 'Reviu' : 'Revivir';
   String reviveWithCarrots(int cost) =>
-      catalan ? 'Reviu · $cost pastanagues' : 'Revivir · $cost zanahorias';
+      catalan ? 'Reviu · $cost carlotes' : 'Revivir · $cost zanahorias';
   String carrotsOwned(int count) => catalan
-      ? 'Tens $count ${count == 1 ? 'pastanaga' : 'pastanagues'}'
+      ? 'Tens $count ${count == 1 ? 'carlota' : 'carlotes'}'
       : 'Tienes $count ${count == 1 ? 'zanahoria' : 'zanahorias'}';
   String reviveNeeds(int cost) => catalan
-      ? 'Necessites $cost pastanagues per a reviure.'
+      ? 'Necessites $cost carlotes per a reviure.'
       : 'Necesitas $cost zanahorias para revivir.';
   String get time => catalan ? 'Temps' : 'Tiempo';
   String get hints => catalan ? 'Pistes' : 'Pistas';
@@ -230,7 +230,7 @@ class Strings {
   String get importConfirmTitle =>
       catalan ? 'Importar este progrés?' : '¿Importar este progreso?';
   String get importConfirmBody => catalan
-      ? 'Se substituiran les etapes, punts, pastanagues, aspectes i ajustos actuals.'
+      ? 'Se substituiran les etapes, punts, carlotes, aspectes i ajustos actuals.'
       : 'Se sustituirán las etapas, puntos, zanahorias, aspectos y ajustes actuales.';
   String get importConfirmAction => catalan ? 'Importar' : 'Importar';
   String get about => catalan ? 'Quant a' : 'Acerca de';

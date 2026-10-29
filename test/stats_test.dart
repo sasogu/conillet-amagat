@@ -25,4 +25,11 @@ void main() {
     final restored = SettingsData.fromJson(settings.toJson());
     expect(restored.nickname, 'Tester');
   });
+
+  test('el valencià és el valor per defecte i es conserva el castellà', () {
+    expect(const SettingsData().language, 'ca');
+    expect(SettingsData.fromJson(const {}).language, 'ca');
+    const spanish = SettingsData(language: 'es');
+    expect(SettingsData.fromJson(spanish.toJson()).language, 'es');
+  });
 }

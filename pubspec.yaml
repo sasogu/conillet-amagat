@@ -1,5 +1,5 @@
 name: conillet_amagat
-description: "Puzle de lógica de conejos: un conejo por fila, columna y región, sin tocarse."
+description: "Puzle de lògica de conills: un conill per fila, columna i regió, sense tocar-se."
 publish_to: 'none'
 version: 0.8.2+13
 
