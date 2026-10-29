@@ -346,6 +346,7 @@ routerAdd("POST", "/api/conillet/points", (e) => {
     throw new BadRequestError("Puntuación total no válida.");
   }
 
+  let mergedPoints = points;
   e.app.runInTransaction((txApp) => {
     let player = null;
     try {
@@ -361,14 +362,31 @@ routerAdd("POST", "/api/conillet/points", (e) => {
       player.set("total", 0);
       player.set("days", 0);
       player.set("points", points);
+    } else if (player.getString("merged_into")) {
+      const target = txApp.findFirstRecordByData(
+        "players", "device_id", player.getString("merged_into"),
+      );
+      const previous = target.getInt("legacy_points");
+      const legacy = Math.max(previous, points);
+      target.set("legacy_points", legacy);
+      target.set("points", target.getInt("points") - previous + legacy);
+      txApp.saveNoValidate(target);
+      player.set("nickname", nickname);
+      player.set("points", 0);
+      mergedPoints = target.getInt("points");
     } else {
       player.set("nickname", nickname);
-      player.set("points", points);
+      const legacy = player.getInt("legacy_points");
+      const local = legacy > 0
+        ? Math.max(player.getInt("points") - legacy, points)
+        : points;
+      player.set("points", local + legacy);
+      mergedPoints = player.getInt("points");
     }
     txApp.saveNoValidate(player);
   });
 
-  return e.json(200, { ok: true, points: points });
+  return e.json(200, { ok: true, points: mergedPoints });
 });
 
 routerAdd("GET", "/api/conillet/general", (e) => {
@@ -378,6 +396,13 @@ routerAdd("GET", "/api/conillet/general", (e) => {
 
   const query = e.requestInfo().query || {};
   const deviceId = text(query.deviceId);
+  let canonicalDeviceId = deviceId;
+  if (deviceId) {
+    try {
+      const player = e.app.findFirstRecordByData("players", "device_id", deviceId);
+      canonicalDeviceId = player.getString("merged_into") || deviceId;
+    } catch (_) {}
+  }
 
   const records = e.app.findRecordsByFilter(
     "players",
@@ -394,14 +419,14 @@ routerAdd("GET", "/api/conillet/general", (e) => {
       rank: rank,
       nickname: record.getString("nickname"),
       points: record.getInt("points"),
-      me: !!deviceId && record.getString("device_id") === deviceId,
+      me: !!canonicalDeviceId && record.getString("device_id") === canonicalDeviceId,
     });
   }
 
   let my = null;
-  if (deviceId) {
+  if (canonicalDeviceId) {
     try {
-      const record = e.app.findFirstRecordByData("players", "device_id", deviceId);
+      const record = e.app.findFirstRecordByData("players", "device_id", canonicalDeviceId);
       const points = record.getInt("points");
       if (points > 0) {
         const total = record.getInt("total");

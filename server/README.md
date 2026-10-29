@@ -18,6 +18,17 @@ API del ranking de Conillet amagat con PocketBase 0.40.6.
   lista básica de palabras ofensivas.
 - CORS: PocketBase permite todos los orígenes por defecto (datos públicos, sin cookies).
 
+## Fusión de puntos entre dispositivos
+
+La migración `1761500002_merge_player_points.js` añade `legacy_points` y
+`merged_into` a `players`. En una fusión, el perfil nuevo conserva su
+identificador y recibe los puntos antiguos en `legacy_points`; el perfil
+antiguo queda con cero puntos y apunta al nuevo con `merged_into`. El servidor
+suma cada total local a los puntos heredados y conserva el máximo de cada
+dispositivo al volver a sincronizar. La clasificación general muestra una sola
+entrada y reconoce ambos dispositivos. Las marcas diarias y la clasificación
+histórica permanecen separadas.
+
 ## Despliegue
 
 1. Copiar `pocketbase`, `pb_migrations/` y `pb_hooks/` a `/opt/conillet-ranking/`.
