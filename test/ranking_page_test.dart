@@ -34,14 +34,18 @@ Future<AppState> createApp() async {
 }
 
 void main() {
-  testWidgets('muestra el ranking y envía la marca diaria', (tester) async {
+  testWidgets('sincroniza al abrir y permite reintentar', (tester) async {
     tester.view.physicalSize = const Size(430, 1000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
 
     final app = await createApp();
+    var dailySubmissions = 0;
+    var pointSubmissions = 0;
     final client = MockClient((request) async {
       if (request.method == 'POST') {
+        if (request.url.path.endsWith('/submit')) dailySubmissions++;
+        if (request.url.path.endsWith('/points')) pointSubmissions++;
         return http.Response(
           jsonEncode({
             'ok': true,
@@ -73,12 +77,7 @@ void main() {
         return http.Response(
           jsonEncode({
             'entries': [
-              {
-                'rank': 1,
-                'nickname': 'Tester',
-                'points': 18450,
-                'me': true,
-              },
+              {'rank': 1, 'nickname': 'Tester', 'points': 18450, 'me': true},
             ],
             'my': null,
           }),
@@ -107,7 +106,9 @@ void main() {
     final api = RankingApi(client: client);
 
     await tester.pumpWidget(
-      MaterialApp(home: RankingPage(app: app, api: api)),
+      MaterialApp(
+        home: RankingPage(app: app, api: api),
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
@@ -115,8 +116,10 @@ void main() {
     expect(find.text('Ranking'), findsOneWidget);
     expect(find.text('Tester'), findsOneWidget);
     expect(find.textContaining('1.500'), findsWidgets);
+    expect(dailySubmissions, greaterThanOrEqualTo(1));
+    expect(pointSubmissions, greaterThanOrEqualTo(1));
 
-    await tester.tap(find.text('Enviar al ranking'));
+    await tester.tap(find.text('Volver a sincronizar').first);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Marca enviada'), findsOneWidget);
@@ -130,7 +133,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.textContaining('18.450'), findsWidgets);
-    await tester.tap(find.text('Enviar mis puntos'));
+    await tester.tap(find.text('Volver a sincronizar').last);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Puntos enviados'), findsOneWidget);

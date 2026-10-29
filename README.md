@@ -7,7 +7,7 @@ regiones de color. Hay que esconder exactamente un conejo en cada fila, en cada
 columna y en cada región, sin que dos conejos se toquen, ni siquiera en
 diagonal.
 
-**Jugar en el navegador:** https://sasogu.github.io/ronron/
+**Jugar en el navegador:** https://sasogu.github.io/conillet-amagat/
 
 <p align="center">
   <img src="docs/icon.png" width="120" alt="Icono de Conillet amagat" />
@@ -32,19 +32,19 @@ diagonal.
 
 ## Web
 
-La versión web está en **https://sasogu.github.io/ronron/** y se puede instalar
+La versión web está en **https://sasogu.github.io/conillet-amagat/** y se puede instalar
 como PWA. El progreso se guarda en el navegador del dispositivo y el juego
 funciona sin conexión tras la primera carga.
 
 El despliegue es automático al hacer push a `main` mediante
-`.github/workflows/web.yml` (GitHub Pages, ruta `/ronron/`). La versión web
+`.github/workflows/web.yml` (GitHub Pages, ruta `/conillet-amagat/`). La versión web
 también puede usar el ranking opcional, con la API en
 `https://samuelsoriano.es/conillet-api`.
 
 ## Descargar
 
 La versión de prueba está en
-[Releases](https://github.com/sasogu/ronron/releases):
+[Releases](https://github.com/sasogu/conillet-amagat/releases):
 
 - APK universal firmado: `conillet-amagat-0.8.1.apk`
 - Requiere Android 7.0 o posterior.
@@ -76,11 +76,10 @@ marca.
 - **Progresión rápida**: resolver sin perder vidas y dentro del tiempo objetivo
   (30 s por casilla de lado) avanza 2 etapas; si además no se usan pistas y se
   baja del 60 % de ese tiempo, avanza 3.
-- **Ranking opcional**: al resolver el puzle diario puedes enviar tu marca y
-  competir en la clasificación diaria y en la histórica. La pestaña **General**
-  añade la clasificación por puntos totales de la app (campaña + diario), que se
-  sincroniza manualmente. Solo se envía el apodo, un identificador aleatorio,
-  la marca y, si usas la general, los puntos totales.
+- **Ranking opcional**: al elegir un apodo, la mejor marca diaria y los puntos
+  totales (campaña + diario) se sincronizan al completar partidas. También se
+  reintenta al abrir el ranking. Solo se envían el apodo, un identificador
+  aleatorio, la marca diaria y los puntos totales.
 - **Pista** coloca un conejo correcto; **Deshacer** revierte el último cambio
   (sin devolver vidas) y **Reiniciar** limpia el tablero y recupera las vidas.
 - Al resolver un puzle se suman **puntos** según el tamaño, el tiempo empleado
@@ -102,8 +101,8 @@ marca.
 - **Aspectos de conejo**: seis colores desbloqueables con zanahorias.
 - **Tutorial de primera vez** y acceso a «Cómo jugar» desde ajustes.
 - **Ranking opcional**: top 20 diario, histórico por suma de marcas y general
-  por puntos totales (campaña + diario), con apodo e identificador anónimo y
-  validación en el servidor.
+  por puntos totales (campaña + diario), con sincronización automática tras
+  participar, apodo e identificador anónimo y validación en el servidor.
 - Guardado automático de la partida en curso, el cronómetro y las vidas.
 - Interfaz en **castellano y valenciano**.
 - Tema **claro, oscuro o según el sistema**.
@@ -174,9 +173,10 @@ generador, el controlador de partida y la interfaz.
 
 ## Privacidad
 
-Conillet amagat funciona completamente sin conexión. No incluye el permiso de
-Internet en el APK de publicación, no crea cuentas y no envía datos a ningún
-servidor. El progreso se guarda localmente con `shared_preferences`.
+Conillet amagat se puede jugar sin conexión. El progreso se guarda localmente
+con `shared_preferences`. Si eliges un apodo para participar en el ranking,
+se envían automáticamente el apodo, un identificador aleatorio, la mejor marca
+diaria y los puntos totales. No se crean cuentas ni se envía correo electrónico.
 
 ## Créditos y alcance
 

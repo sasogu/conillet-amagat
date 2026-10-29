@@ -37,10 +37,10 @@ class Strings {
   String get rankingPointsTitle =>
       catalan ? 'Els teus punts totals' : 'Tus puntos totales';
   String get rankingPointsNote => catalan
-      ? 'Inclouen la campanya i el diari. S\'envien a la classificació general.'
-      : 'Incluyen la campaña y el diario. Se envían a la clasificación general.';
+      ? 'Inclouen la campanya i el diari. Se sincronitzen automàticament.'
+      : 'Incluyen la campaña y el diario. Se sincronizan automáticamente.';
   String get rankingSyncPoints =>
-      catalan ? 'Envia els meus punts' : 'Enviar mis puntos';
+      catalan ? 'Torna a sincronitzar' : 'Volver a sincronizar';
   String get rankingPointsSent => catalan ? 'Punts enviats' : 'Puntos enviados';
   String get rankingEmptyGeneral =>
       catalan ? 'Encara no hi ha punts.' : 'Todavía no hay puntos.';
@@ -55,17 +55,17 @@ class Strings {
   String get saveNickname => catalan ? 'Guardar' : 'Guardar';
   String get rankingJoin => catalan ? 'Participar' : 'Participar';
   String get rankingPrivacy => catalan
-      ? 'Només s\'envien el sobrenom, un identificador aleatori, la marca del diari i els punts totals si uses la classificació general. Sense comptes ni correu.'
-      : 'Solo se envían el apodo, un identificador aleatorio, la marca del diario y los puntos totales si usas la clasificación general. Sin cuentas ni correo.';
+      ? 'En participar, la marca diària i els punts totals se sincronitzen automàticament amb el sobrenom i un identificador aleatori. Sense comptes ni correu.'
+      : 'Al participar, la marca diaria y los puntos totales se sincronizan automáticamente con el apodo y un identificador aleatorio. Sin cuentas ni correo.';
   String get rankingDailyResult =>
       catalan ? 'La teua marca de hui' : 'Tu marca de hoy';
   String get rankingNoDaily => catalan
       ? 'Resol el puzle diari per a entrar en la classificació.'
       : 'Resuelve el puzle diario para entrar en el ranking.';
   String get rankingSubmit =>
-      catalan ? 'Enviar al rànquing' : 'Enviar al ranking';
+      catalan ? 'Torna a sincronitzar' : 'Volver a sincronizar';
   String get rankingUpdate =>
-      catalan ? 'Actualitzar marca' : 'Actualizar marca';
+      catalan ? 'Torna a sincronitzar' : 'Volver a sincronizar';
   String get rankingSent => catalan ? 'Marca enviada' : 'Marca enviada';
   String get rankingError => catalan
       ? 'No s\'ha pogut connectar amb el rànquing.'
@@ -134,6 +134,23 @@ class Strings {
       catalan ? 'Marca X automàticament' : 'Marcar X automáticamente';
   String get autoCrossShort => catalan ? 'X auto' : 'X auto';
   String get bunnies => catalan ? 'Conills' : 'Conejos';
+  String bunnyProgress(int count, int total) {
+    if (count == total) {
+      return catalan
+          ? 'Tots els conills amagats!'
+          : '¡Todos los conejos escondidos!';
+    }
+    if (count == total - 1) {
+      return catalan ? 'Només en falta un!' : '¡Solo falta uno!';
+    }
+    if (count >= (total / 2).ceil()) {
+      return catalan
+          ? 'Ja en tens més de la meitat!'
+          : '¡Ya tienes más de la mitad!';
+    }
+    return catalan ? 'Amaga els conills!' : '¡Esconde los conejos!';
+  }
+
   String get lives => catalan ? 'Vides' : 'Vidas';
   String get points => catalan ? 'Punts' : 'Puntos';
   String get carrots => catalan ? 'Pastanagues' : 'Zanahorias';

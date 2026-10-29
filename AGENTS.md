@@ -56,18 +56,19 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 
 ## Ranking
 
-- Ranking opcional del puzle diario. La app no envía nada automáticamente: el
-  jugador pulsa «Enviar al ranking» en `lib/ui/ranking_page.dart`.
+- Ranking opcional: al elegir apodo, la app sincroniza automáticamente la mejor
+  marca diaria y los puntos generales al completar una partida. Sin apodo no
+  envía nada. `lib/ui/ranking_page.dart` permite reintentar la sincronización.
 - API: `https://samuelsoriano.es/conillet-api`, servida por PocketBase 0.40.6 en
   el VPS aulessocarrades (127.0.0.1:8096) y publicada con nginx en
   `/conillet-api/`. Código y despliegue en `server/`.
 - El servidor valida la fórmula de puntos, el tamaño según el día, la fecha
   (±1 día UTC), el apodo y devuelve top 20 diario/histórico. La clasificación
-  **General** usa `players.points` y se sincroniza manualmente desde la app con
+  **General** usa `players.points` y se sincroniza desde la app con
   `POST /api/conillet/points`; `GET /api/conillet/general` devuelve el top 20.
-- Los puntos generales son los `StatsData.points` locales (campaña + diario);
-  no se envían automáticamente. El histórico sigue siendo la suma de marcas
-  diarias (`players.total`/`days`).
+- Los puntos generales son los `StatsData.points` locales (campaña + diario) y
+  se sincronizan al completar partidas. El histórico sigue siendo la suma de
+  marcas diarias (`players.total`/`days`).
 - Identidad: `playerId` aleatorio en `ronron.player.id` y apodo en
   `SettingsData.nickname`. El mejor resultado diario se guarda en
   `StatsData.lastDaily*`.
@@ -79,11 +80,11 @@ Ejecutar `flutter analyze` y `flutter test` antes de cualquier commit.
 
 ## Web
 
-- La web se publica en https://sasogu.github.io/ronron/ con GitHub Pages.
+- La web se publica en https://sasogu.github.io/conillet-amagat/ con GitHub Pages.
 - Workflow: `.github/workflows/web.yml` (Flutter 3.35.7 y `--base-href`
   dinámico con el nombre del repositorio). No subir `build/web`.
-- Para probar en local: `flutter build web --release --base-href /ronron/` y
-  servir `build/web` bajo una carpeta `ronron/`.
+- Para probar en local: `flutter build web --release --base-href /conillet-amagat/` y
+  servir `build/web` bajo una carpeta `conillet-amagat/`.
 - `web/manifest.json`, `web/index.html` y los iconos son parte del producto;
   el icono web debe coincidir con `docs/icon.png`.
 - La web guarda el progreso en `localStorage`; es independiente del APK.

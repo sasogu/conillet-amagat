@@ -43,6 +43,7 @@ class _RankingPageState extends State<RankingPage> {
     _ownsApi = widget.api == null;
     _nicknameController = TextEditingController(text: widget.app.nickname);
     _load();
+    _syncAutomatically();
   }
 
   @override
@@ -95,6 +96,12 @@ class _RankingPageState extends State<RankingPage> {
     }
   }
 
+  Future<void> _syncAutomatically() async {
+    if (widget.app.nickname.isEmpty) return;
+    final synced = await widget.app.syncRanking(api: _api);
+    if (mounted && synced) await _load();
+  }
+
   Future<void> _changeTab(_RankingTab tab) async {
     if (_tab == tab) return;
     setState(() {
@@ -121,6 +128,7 @@ class _RankingPageState extends State<RankingPage> {
     if (!mounted) return;
     FocusScope.of(context).unfocus();
     _showMessage(widget.app.strings.nicknameSaved);
+    await _syncAutomatically();
   }
 
   Future<void> _editNickname() async {
@@ -161,7 +169,10 @@ class _RankingPageState extends State<RankingPage> {
     controller.dispose();
     if (result == null) return;
     await widget.app.setNickname(result);
-    if (mounted) _showMessage(widget.app.strings.nicknameSaved);
+    if (mounted) {
+      _showMessage(widget.app.strings.nicknameSaved);
+      await _syncAutomatically();
+    }
   }
 
   Future<void> _submit() async {
@@ -286,8 +297,7 @@ class _RankingPageState extends State<RankingPage> {
                   ),
                 ],
                 selected: {_tab},
-                onSelectionChanged: (selection) =>
-                    _changeTab(selection.first),
+                onSelectionChanged: (selection) => _changeTab(selection.first),
               ),
               const SizedBox(height: 14),
               if (_tab == _RankingTab.daily) ...[
@@ -326,23 +336,11 @@ class _RankingPageState extends State<RankingPage> {
                   theme: theme,
                 )
               else if (_tab == _RankingTab.daily)
-                _DailyList(
-                  ranking: _daily,
-                  strings: strings,
-                  theme: theme,
-                )
+                _DailyList(ranking: _daily, strings: strings, theme: theme)
               else if (_tab == _RankingTab.history)
-                _HistoryList(
-                  ranking: _history,
-                  strings: strings,
-                  theme: theme,
-                )
+                _HistoryList(ranking: _history, strings: strings, theme: theme)
               else
-                _GeneralList(
-                  ranking: _general,
-                  strings: strings,
-                  theme: theme,
-                ),
+                _GeneralList(ranking: _general, strings: strings, theme: theme),
               if (nickname.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 Text(
@@ -438,10 +436,7 @@ class _PlayingAsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Icon(
-          Icons.person_outline,
-          color: theme.colorScheme.primary,
-        ),
+        leading: Icon(Icons.person_outline, color: theme.colorScheme.primary),
         title: Text('${strings.playingAs} $nickname'),
         trailing: IconButton(
           tooltip: strings.editNickname,
@@ -1071,10 +1066,7 @@ class _ErrorCard extends StatelessWidget {
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 10),
-            FilledButton.tonal(
-              onPressed: onRetry,
-              child: Text(retry),
-            ),
+            FilledButton.tonal(onPressed: onRetry, child: Text(retry)),
           ],
         ),
       ),

@@ -10,9 +10,10 @@ import 'game/puzzle.dart';
 import 'game/scoring.dart';
 import 'l10n/strings.dart';
 import 'ranking/player_id.dart';
+import 'ranking/ranking_api.dart';
 
 class AppState extends ChangeNotifier {
-  AppState({required this.store, required this.repository}) {
+  AppState({required this.store, required this.repository, this.rankingApi}) {
     settings = store.readSettings();
     stats = store.readStats();
     savedGame = store.readGame();
@@ -29,6 +30,7 @@ class AppState extends ChangeNotifier {
 
   final GameStore store;
   final PuzzleRepository repository;
+  final RankingApi? rankingApi;
 
   late SettingsData settings;
   late StatsData stats;
@@ -104,6 +106,44 @@ class AppState extends ChangeNotifier {
     settings = settings.copyWith(nickname: value.trim());
     await store.writeSettings(settings);
     notifyListeners();
+  }
+
+  Future<bool> syncRanking({RankingApi? api}) async {
+    if (nickname.isEmpty) return false;
+    final client = api ?? rankingApi ?? RankingApi();
+    final closeClient = api == null && rankingApi == null;
+    var synced = true;
+    try {
+      final currentPoints = stats.points;
+      try {
+        await client.submitPoints(
+          deviceId: playerId,
+          nickname: nickname,
+          points: currentPoints,
+        );
+      } catch (_) {
+        synced = false;
+      }
+      final today = dayKeyString(DateTime.now());
+      if (stats.lastDaily == today && stats.lastDailyScore > 0) {
+        try {
+          await client.submitDaily(
+            deviceId: playerId,
+            nickname: nickname,
+            day: today,
+            score: stats.lastDailyScore,
+            seconds: stats.lastDailySeconds,
+            lives: stats.lastDailyLives,
+            size: stats.lastDailySize,
+          );
+        } catch (_) {
+          synced = false;
+        }
+      }
+    } finally {
+      if (closeClient) client.close();
+    }
+    return synced;
   }
 
   Future<void> markTutorialSeen() async {
@@ -218,6 +258,7 @@ class AppState extends ChangeNotifier {
     await store.writeStats(stats);
     await clearSavedGame();
     notifyListeners();
+    if (nickname.isNotEmpty) unawaited(syncRanking());
   }
 
   static int dateKey(DateTime date) =>

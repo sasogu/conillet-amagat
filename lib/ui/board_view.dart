@@ -40,8 +40,47 @@ class BoardView extends StatefulWidget {
   State<BoardView> createState() => _BoardViewState();
 }
 
-class _BoardViewState extends State<BoardView> {
+class _BoardViewState extends State<BoardView>
+    with SingleTickerProviderStateMixin {
   Set<int> _visited = {};
+  late final AnimationController _placementAnimation;
+  late List<CellMark> _previousMarks;
+  int? _placedCell;
+
+  @override
+  void initState() {
+    super.initState();
+    _previousMarks = List.of(widget.marks);
+    _placementAnimation = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    )..addListener(() => setState(() {}));
+  }
+
+  @override
+  void didUpdateWidget(covariant BoardView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_previousMarks.length != widget.marks.length) {
+      _previousMarks = List.of(widget.marks);
+      return;
+    }
+    for (var cell = 0; cell < widget.marks.length; cell++) {
+      if (widget.marks[cell] == CellMark.bunny &&
+          _previousMarks[cell] != CellMark.bunny &&
+          !widget.given.contains(cell)) {
+        _placedCell = cell;
+        _placementAnimation.forward(from: 0);
+        break;
+      }
+    }
+    _previousMarks = List.of(widget.marks);
+  }
+
+  @override
+  void dispose() {
+    _placementAnimation.dispose();
+    super.dispose();
+  }
 
   int? _cellAt(Offset position, double side) {
     if (position.dx < 0 ||
@@ -75,6 +114,8 @@ class _BoardViewState extends State<BoardView> {
                 given: widget.given,
                 skin: widget.skin,
                 colors: colors,
+                placedCell: _placedCell,
+                placementProgress: _placementAnimation.value,
               ),
             ),
           ),
@@ -130,6 +171,8 @@ class _BoardPainter extends CustomPainter {
     required this.given,
     required this.skin,
     required this.colors,
+    required this.placedCell,
+    required this.placementProgress,
   });
 
   final Puzzle puzzle;
@@ -139,6 +182,8 @@ class _BoardPainter extends CustomPainter {
   final Set<int> given;
   final BunnySkin skin;
   final BoardColors colors;
+  final int? placedCell;
+  final double placementProgress;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -193,6 +238,24 @@ class _BoardPainter extends CustomPainter {
       );
       final mark = marks[cell];
       if (mark == CellMark.bunny) {
+        final appearing = cell == placedCell && placementProgress < 1;
+        if (appearing) {
+          final sparkle = 1 - placementProgress;
+          canvas.drawCircle(
+            rect.center,
+            cellSize * (0.25 + placementProgress * 0.19),
+            Paint()
+              ..color = skin.body.withValues(alpha: sparkle * 0.45)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = math.max(1.5, cellSize * 0.045 * sparkle),
+          );
+          canvas.save();
+          canvas.translate(rect.center.dx, rect.center.dy);
+          final scale =
+              0.65 + 0.35 * Curves.easeOutBack.transform(placementProgress);
+          canvas.scale(scale);
+          canvas.translate(-rect.center.dx, -rect.center.dy);
+        }
         paintBunnyFace(
           canvas,
           rect.center,
@@ -202,12 +265,10 @@ class _BoardPainter extends CustomPainter {
           outline: skin.outline,
           innerEar: skin.innerEar,
         );
+        if (appearing) canvas.restore();
         if (conflicts.contains(cell)) {
           canvas.drawRRect(
-            RRect.fromRectAndRadius(
-              rect.deflate(cellSize * 0.12),
-              tileRadius,
-            ),
+            RRect.fromRectAndRadius(rect.deflate(cellSize * 0.12), tileRadius),
             Paint()
               ..style = PaintingStyle.stroke
               ..strokeWidth = math.max(2, cellSize * 0.055)

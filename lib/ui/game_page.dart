@@ -186,7 +186,9 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(widget.app.strings.wrongBunny(controller.lives))),
+        SnackBar(
+          content: Text(widget.app.strings.wrongBunny(controller.lives)),
+        ),
       );
   }
 
@@ -212,9 +214,7 @@ class _GamePageState extends State<GamePage> with WidgetsBindingObserver {
               )
             : 1;
         return AlertDialog(
-          icon: Center(
-            child: BunnyLogo(size: 58, skin: widget.app.skin),
-          ),
+          icon: Center(child: BunnyLogo(size: 58, skin: widget.app.skin)),
           title: Text(strings.winTitle, textAlign: TextAlign.center),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -674,12 +674,6 @@ class _Controls extends StatelessWidget {
           ),
         ),
         Text(
-          '${strings.bunnies}: ${controller.bunnyCount}/$total',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        Text(
           '${strings.hints}: ${controller.hintsUsed}',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
@@ -694,6 +688,12 @@ class _Controls extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _ProgressTrail(
+            count: controller.bunnyCount,
+            total: total,
+            strings: strings,
+          ),
+          const SizedBox(height: 10),
           if (wide) ...[status, const SizedBox(height: 14)],
           tools,
           const SizedBox(height: 10),
@@ -709,6 +709,66 @@ class _Controls extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProgressTrail extends StatelessWidget {
+  const _ProgressTrail({
+    required this.count,
+    required this.total,
+    required this.strings,
+  });
+
+  final int count;
+  final int total;
+  final Strings strings;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.pets_rounded,
+              size: 18,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                strings.bunnyProgress(count, total),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Text(
+              '$count/$total',
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        TweenAnimationBuilder<double>(
+          tween: Tween<double>(end: count / total),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, _) => LinearProgressIndicator(
+            value: value,
+            minHeight: 7,
+            borderRadius: BorderRadius.circular(8),
+            backgroundColor: theme.colorScheme.surfaceContainer,
+          ),
+        ),
+      ],
     );
   }
 }
