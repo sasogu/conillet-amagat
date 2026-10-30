@@ -449,14 +449,19 @@ class _DailyCard extends StatelessWidget {
                       color: scheme.onPrimaryContainer,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      strings.dateLong(date),
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: scheme.onPrimaryContainer,
-                        fontWeight: FontWeight.w600,
+                    // Long dates ("divendres, 30 d'octubre de 2026") must not
+                    // overflow narrow phones.
+                    Expanded(
+                      child: Text(
+                        strings.dateLong(date),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    const Spacer(),
                     if (completed)
                       Icon(
                         Icons.check_circle_rounded,

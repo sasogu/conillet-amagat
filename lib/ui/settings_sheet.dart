@@ -169,8 +169,7 @@ Future<void> _exportProgress(BuildContext context, AppState app) async {
     final path = await FilePicker.saveFile(
       dialogTitle: strings.exportProgress,
       fileName: 'conillet-amagat-progres-${_fileStamp(DateTime.now())}.json',
-      type: FileType.custom,
-      allowedExtensions: const ['json'],
+      mimeType: 'application/json',
       bytes: Uint8List.fromList(utf8.encode(json)),
     );
     if (!kIsWeb && path == null) return;
@@ -184,15 +183,13 @@ Future<void> _importProgress(BuildContext context, AppState app) async {
   final strings = app.strings;
   final messenger = ScaffoldMessenger.of(context);
   try {
-    final result = await FilePicker.pickFiles(
+    final file = await FilePicker.pickFile(
       dialogTitle: strings.importProgress,
       type: FileType.custom,
       allowedExtensions: const ['json'],
-      withData: true,
     );
-    if (result == null) return;
-    final bytes = result.files.single.bytes;
-    if (bytes == null) throw const FormatException('Sin datos');
+    if (file == null) return;
+    final bytes = await file.readAsBytes();
     final decoded = jsonDecode(utf8.decode(bytes));
     if (decoded is! Map) throw const FormatException('Sin datos');
     if (!context.mounted) return;

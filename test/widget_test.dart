@@ -65,7 +65,9 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('campaign-play')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 450));
+    // Wait past the 450 ms route transition: the Android predictive-back
+    // transition keeps the home page painted until it ends.
+    await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.byType(BoardView), findsOneWidget);
     expect(find.text('Etapa 1'), findsOneWidget);
