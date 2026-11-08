@@ -129,10 +129,10 @@ class _BunnyLogoPainter extends CustomPainter {
   final BunnySkin skin;
 
   static const _tiles = [
-    Color(0xFFF3C6B8),
-    Color(0xFFF4E1AD),
-    Color(0xFFCDE3C0),
-    Color(0xFFBFDCE8),
+    Color(0xFFF0AE9E),
+    Color(0xFFF5B766),
+    Color(0xFFBBDD92),
+    Color(0xFF8CCBEC),
   ];
 
   @override

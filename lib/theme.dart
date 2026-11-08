@@ -92,37 +92,35 @@ class BoardColors {
 
   static const BoardColors light = BoardColors(
     regions: [
-      Color(0xFFF3C6B8),
-      Color(0xFFF4E1AD),
-      Color(0xFFCDE3C0),
-      Color(0xFFBFDCE8),
-      Color(0xFFD3CEEB),
-      Color(0xFFF2C9DC),
-      Color(0xFFE2D6C3),
-      Color(0xFFC4E4DC),
-      Color(0xFFEAD6BE),
-      Color(0xFFD9E2F0),
+      Color(0xFFF0AE9E), // coral
+      Color(0xFFF5B766), // albaricoque
+      Color(0xFFEDDA66), // dorado
+      Color(0xFFBBDD92), // pistacho
+      Color(0xFF8FDDC6), // menta
+      Color(0xFF8CCBEC), // cielo
+      Color(0xFF9CB3F0), // azul lavanda
+      Color(0xFFC99FE9), // violeta
+      Color(0xFFF1AECC), // rosa
     ],
-    cross: Color(0xFF8A7F72),
-    autoCross: Color(0xFFB4A99C),
+    cross: Color(0xFF6E6459),
+    autoCross: Color(0xFF9C9184),
     gap: Color(0xFFFFFCF6),
     conflict: Color(0xFFD1495B),
   );
 
   static const BoardColors dark = BoardColors(
     regions: [
-      Color(0xFFA9655A), // coral
-      Color(0xFFA98A48), // ámbar
-      Color(0xFF6F8E5E), // salvia
-      Color(0xFF4B8779), // verde azulado
-      Color(0xFF4E7F98), // azul cian
-      Color(0xFF6F78A6), // índigo
-      Color(0xFF896CA1), // violeta
-      Color(0xFFA4617D), // rosa
-      Color(0xFF5C6E8B), // pizarra
-      Color(0xFF8B7960), // arena
+      Color(0xFFB0665B), // coral
+      Color(0xFFC9763A), // albaricoque
+      Color(0xFF90881F), // dorado
+      Color(0xFF6C9054), // pistacho
+      Color(0xFF3A8C77), // menta
+      Color(0xFF4B8098), // cielo
+      Color(0xFF6178B2), // azul lavanda
+      Color(0xFF986CA6), // violeta
+      Color(0xFFA86280), // rosa
     ],
-    cross: Color(0xFFE6DCCB),
+    cross: Color(0xFFF1E9DB),
     autoCross: Color(0xFF4A453D),
     gap: Color(0xFF0A0D0C),
     conflict: Color(0xFFFF8492),
