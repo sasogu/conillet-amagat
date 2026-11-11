@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../data/game_store.dart';
@@ -47,6 +49,13 @@ class _BoardViewState extends State<BoardView>
   late List<CellMark> _previousMarks;
   int? _placedCell;
 
+  Timer? _tapTimer;
+  int? _pendingTapCell;
+  int? _activePointer;
+  Offset? _pointerDownPosition;
+  int? _pointerDownCell;
+  bool _dragging = false;
+
   @override
   void initState() {
     super.initState();
@@ -78,8 +87,88 @@ class _BoardViewState extends State<BoardView>
 
   @override
   void dispose() {
+    _tapTimer?.cancel();
     _placementAnimation.dispose();
     super.dispose();
+  }
+
+  void _handlePointerDown(PointerDownEvent event, double side) {
+    if (_activePointer != null) return;
+    _activePointer = event.pointer;
+    _pointerDownPosition = event.localPosition;
+    _pointerDownCell = _cellAt(event.localPosition, side);
+    _dragging = false;
+  }
+
+  void _handlePointerMove(PointerMoveEvent event, double side) {
+    final down = _pointerDownPosition;
+    if (event.pointer != _activePointer || down == null) return;
+    final distance = (event.localPosition - down).distance;
+    if (!_dragging) {
+      if (distance <= kPanSlop) return;
+      _dragging = true;
+      final start = _cellAt(event.localPosition, side);
+      if (start == null) return;
+      _visited = {start};
+      widget.onDragMark(start);
+      return;
+    }
+    final cell = _cellAt(event.localPosition, side);
+    if (cell == null || _visited.contains(cell)) return;
+    _visited.add(cell);
+    widget.onDragMark(cell);
+  }
+
+  void _handlePointerUp(PointerUpEvent event) {
+    if (event.pointer != _activePointer) return;
+    final cell = _pointerDownCell;
+    final dragging = _dragging;
+    _resetPointer();
+    if (dragging) {
+      widget.onDragEnd();
+      return;
+    }
+    if (cell == null) return;
+    _handleTap(cell);
+  }
+
+  void _handlePointerCancel(PointerCancelEvent event) {
+    if (event.pointer != _activePointer) return;
+    final dragging = _dragging;
+    _resetPointer();
+    if (dragging) widget.onDragEnd();
+  }
+
+  void _resetPointer() {
+    _activePointer = null;
+    _pointerDownPosition = null;
+    _pointerDownCell = null;
+    _dragging = false;
+    _visited = {};
+  }
+
+  void _handleTap(int cell) {
+    final pending = _pendingTapCell;
+    if (pending == cell && _tapTimer != null) {
+      _tapTimer!.cancel();
+      _tapTimer = null;
+      _pendingTapCell = null;
+      widget.onDoubleTap(cell);
+      return;
+    }
+    if (pending != null) {
+      _tapTimer?.cancel();
+      _tapTimer = null;
+      _pendingTapCell = null;
+      widget.onTap(pending);
+    }
+    _pendingTapCell = cell;
+    _tapTimer = Timer(kDoubleTapTimeout, () {
+      _tapTimer = null;
+      final tapped = _pendingTapCell;
+      _pendingTapCell = null;
+      if (tapped != null && mounted) widget.onTap(tapped);
+    });
   }
 
   int? _cellAt(Offset position, double side) {
@@ -125,36 +214,12 @@ class _BoardViewState extends State<BoardView>
           return SizedBox.square(dimension: side, child: board);
         }
 
-        return GestureDetector(
+        return Listener(
           behavior: HitTestBehavior.opaque,
-          onTapUp: (details) {
-            final cell = _cellAt(details.localPosition, side);
-            if (cell != null) widget.onTap(cell);
-          },
-          onDoubleTapDown: (details) {
-            final cell = _cellAt(details.localPosition, side);
-            if (cell != null) widget.onDoubleTap(cell);
-          },
-          onPanStart: (details) {
-            final cell = _cellAt(details.localPosition, side);
-            if (cell == null) return;
-            _visited = {cell};
-            widget.onDragMark(cell);
-          },
-          onPanUpdate: (details) {
-            final cell = _cellAt(details.localPosition, side);
-            if (cell == null || _visited.contains(cell)) return;
-            _visited.add(cell);
-            widget.onDragMark(cell);
-          },
-          onPanEnd: (_) {
-            _visited = {};
-            widget.onDragEnd();
-          },
-          onPanCancel: () {
-            _visited = {};
-            widget.onDragEnd();
-          },
+          onPointerDown: (event) => _handlePointerDown(event, side),
+          onPointerMove: (event) => _handlePointerMove(event, side),
+          onPointerUp: _handlePointerUp,
+          onPointerCancel: _handlePointerCancel,
           child: SizedBox.square(dimension: side, child: board),
         );
       },

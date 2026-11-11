@@ -212,6 +212,48 @@ void main() {
     await tester.pump();
   });
 
+  testWidgets('dos toques seguidos en casillas distintas no gastan vida', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final app = await createApp();
+    await tester.pumpWidget(ConilletAmagatApp(app: app));
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('campaign-play')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+
+    final puzzle = app.repository.levelPuzzle(6, 1);
+    final rect = tester.getRect(find.byType(BoardView));
+    final cellSize = rect.width / puzzle.size;
+    final wrongCells = [
+      for (var cell = 0; cell < puzzle.cellCount; cell++)
+        if (!puzzle.solution.contains(cell)) cell,
+    ].take(2).toList();
+
+    Offset point(int cell) =>
+        rect.topLeft +
+        Offset(
+          (cell % puzzle.size + 0.5) * cellSize,
+          (cell ~/ puzzle.size + 0.5) * cellSize,
+        );
+
+    await tester.tapAt(point(wrongCells[0]));
+    await tester.pump(const Duration(milliseconds: 60));
+    await tester.tapAt(point(wrongCells[1]));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.byIcon(Icons.favorite_rounded), findsNWidgets(3));
+    expect(find.textContaining('Conejo mal colocado'), findsNothing);
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+  });
+
   testWidgets('revivir gasta zanahorias y devuelve una vida', (tester) async {
     tester.view.physicalSize = const Size(430, 900);
     tester.view.devicePixelRatio = 1;
@@ -327,6 +369,9 @@ void main() {
     final puzzle = app.repository.levelPuzzle(6, 1);
     int? single;
     int? doubleTapped;
+    final taps = <int>[];
+    final dragMarks = <int>[];
+    var dragEnds = 0;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -339,10 +384,13 @@ void main() {
                 marks: List.filled(puzzle.cellCount, CellMark.none),
                 blocked: const {},
                 conflicts: const {},
-                onTap: (cell) => single = cell,
+                onTap: (cell) {
+                  single = cell;
+                  taps.add(cell);
+                },
                 onDoubleTap: (cell) => doubleTapped = cell,
-                onDragMark: (_) {},
-                onDragEnd: () {},
+                onDragMark: dragMarks.add,
+                onDragEnd: () => dragEnds++,
               ),
             ),
           ),
@@ -364,5 +412,34 @@ void main() {
     await tester.tapAt(second);
     await tester.pump(const Duration(milliseconds: 400));
     expect(doubleTapped, puzzle.cellAt(0, 1));
+
+    taps.clear();
+    single = null;
+    doubleTapped = null;
+    final third = rect.topLeft + Offset(cellSize * 2.5, cellSize * 0.5);
+    final fourth = rect.topLeft + Offset(cellSize * 3.5, cellSize * 0.5);
+    await tester.tapAt(third);
+    await tester.pump(const Duration(milliseconds: 60));
+    await tester.tapAt(fourth);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(taps, [puzzle.cellAt(0, 2), puzzle.cellAt(0, 3)]);
+    expect(doubleTapped, isNull);
+
+    taps.clear();
+    dragMarks.clear();
+    dragEnds = 0;
+    final gesture = await tester.startGesture(first);
+    await gesture.moveBy(const Offset(40, 0));
+    await tester.pump(const Duration(milliseconds: 16));
+    await gesture.moveBy(const Offset(40, 0));
+    await tester.pump(const Duration(milliseconds: 16));
+    await gesture.moveBy(const Offset(50, 0));
+    await tester.pump(const Duration(milliseconds: 16));
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(dragMarks, contains(puzzle.cellAt(0, 1)));
+    expect(dragMarks, contains(puzzle.cellAt(0, 2)));
+    expect(dragEnds, 1);
+    expect(taps, isEmpty);
   });
 }
