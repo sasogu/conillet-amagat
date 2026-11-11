@@ -46,11 +46,11 @@ también puede usar el ranking opcional, con la API en
 La versión de prueba está en
 [Releases](https://github.com/sasogu/conillet-amagat/releases):
 
-- APK universal firmado: `conillet-amagat-0.8.1.apk`
+- APK universal firmado: `conillet-amagat-0.9.0.apk`
 - Requiere Android 7.0 o posterior.
 - Instalación manual: descarga el APK y permite la instalación desde el
   navegador o el gestor de archivos. También se puede instalar con
-  `adb install conillet-amagat-0.8.1.apk`.
+  `adb install conillet-amagat-0.9.0.apk`.
 
 El juego funciona sin conexión y guarda el progreso en el dispositivo. El
 ranking es opcional: solo usa Internet si decides participar y enviar tu
