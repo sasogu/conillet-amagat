@@ -9,8 +9,8 @@ void main() {
     File('assets/puzzles.json').readAsStringSync(),
   );
 
-  test('la campaña encadena los tamaños de 6×6 a 9×9', () {
-    expect(campaignTotalStages(repository), 399);
+  test('la campaña encadena los tamaños de 6×6 a 10×10', () {
+    expect(campaignTotalStages(repository), 699);
 
     final first = campaignStageFor(repository, 1);
     expect(first.size, 6);
@@ -30,9 +30,18 @@ void main() {
     expect(campaignStageFor(repository, 200).size, 8);
     expect(campaignStageFor(repository, 300).size, 9);
     expect(campaignStageFor(repository, 399).level, 100);
+    expect(campaignStageFor(repository, 400).size, 9);
+    expect(campaignStageFor(repository, 400).level, 101);
+    expect(campaignStageFor(repository, 599).size, 9);
+    expect(campaignStageFor(repository, 599).level, 300);
+    expect(campaignStageFor(repository, 600).size, 10);
+    expect(campaignStageFor(repository, 600).level, 1);
+    expect(campaignStageFor(repository, 699).size, 10);
+    expect(campaignStageFor(repository, 699).level, 100);
+    expect(campaignStageFor(repository, 699).endless, isFalse);
 
-    final loop = campaignStageFor(repository, 400);
-    expect(loop.size, 9);
+    final loop = campaignStageFor(repository, 700);
+    expect(loop.size, 10);
     expect(loop.level, 1);
     expect(loop.endless, isTrue);
   });

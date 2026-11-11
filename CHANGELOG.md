@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 — 2026-11-11
+
+- Campaña ampliada a **699 etapas**: 200 puzles nuevos de 9×9 (300 en total) y
+  una nueva franja de 100 puzles de 10×10. El modo sin fin usa ahora los 10×10.
+- Nueva región de color turquesa para los tableros de 10×10.
+- Corregido el doble toque: dos toques rápidos en casillas distintas ya no se
+  confunden con un doble toque ni descuentan vidas. El doble toque solo actúa
+  si ambos toques caen en la misma casilla y se confirma al levantar el dedo.
+
 ## 0.8.1 — 2026-10-26
 
 - Nuevo aspecto **Lila** en Aspectos, con un precio de 40 zanahorias.

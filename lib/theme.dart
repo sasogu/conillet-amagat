@@ -101,6 +101,7 @@ class BoardColors {
       Color(0xFF9CB3F0), // azul lavanda
       Color(0xFFC99FE9), // violeta
       Color(0xFFF1AECC), // rosa
+      Color(0xFFC4E9E9), // turquesa
     ],
     cross: Color(0xFF6E6459),
     autoCross: Color(0xFF9C9184),
@@ -119,6 +120,7 @@ class BoardColors {
       Color(0xFF6178B2), // azul lavanda
       Color(0xFF986CA6), // violeta
       Color(0xFFA86280), // rosa
+      Color(0xFF49ABAB), // turquesa
     ],
     cross: Color(0xFFF1E9DB),
     autoCross: Color(0xFF4A453D),

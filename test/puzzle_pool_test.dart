@@ -66,6 +66,6 @@ void main() {
         );
       }
     }
-    expect(total, greaterThanOrEqualTo(350));
+    expect(total, 699);
   });
 }

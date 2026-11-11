@@ -88,13 +88,13 @@ marca.
 
 ## Características
 
-- 399 puzles originales verificados con **solución única**: 99 de 6×6, 100 de
-  7×7, 100 de 8×8 y 100 de 9×9.
+- 699 puzles originales verificados con **solución única**: 99 de 6×6, 100 de
+  7×7, 100 de 8×8, 300 de 9×9 y 100 de 10×10.
 - Regiones irregulares, desde casillas pequeñas hasta formas alargadas, como
   en los puzles de este género.
 - **Puzle diario** con tamaño rotativo, racha de días y progreso guardado.
-- **Campaña de 399 etapas** de 6×6 a 9×9, con progreso guardado, saltos de
-  etapa por rapidez y 9×9 infinitos al terminarla.
+- **Campaña de 699 etapas** de 6×6 a 10×10, con progreso guardado, saltos de
+  etapa por rapidez y 10×10 infinitos al terminarla.
 - **Conejos de pista** fijos en las primeras etapas para arrancar con ayuda.
 - **Puntos y zanahorias**: puntuación por tiempo y vidas conservadas, con
   contadores acumulados en la portada. Las zanahorias sirven para revivir.
@@ -168,7 +168,7 @@ dart run tool/gen_range.dart 8 0 50 /tmp/pool-8.json
 dart run tool/verify_pool.dart
 ```
 
-Las pruebas del proyecto validan los 399 puzles del lote, además del
+Las pruebas del proyecto validan los 699 puzles del lote, además del
 generador, el controlador de partida y la interfaz.
 
 ## Privacidad
@@ -201,7 +201,7 @@ términos de la **GNU General Public License, versión 3 o posterior**. Consulta
 
 Conillet amagat is a free, offline, ad-free bunny logic puzzle for Android.
 Hide one bunny in every row, column and colored region without touching, not
-even diagonally. Includes 399 original uniquely-solvable puzzles, a rotating
+even diagonally. Includes 699 original uniquely-solvable puzzles, a rotating
 daily puzzle, endless levels, Spanish/Valencian UI, dark mode, autosave and
 hints. Built with Flutter. Not affiliated with Meowdoku. Licensed under
 GPL-3.0-or-later.

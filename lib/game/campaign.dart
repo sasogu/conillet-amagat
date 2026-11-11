@@ -1,7 +1,7 @@
 import '../data/puzzle_repository.dart';
 import 'puzzle.dart';
 
-/// Etapa de la campaña: una secuencia lineal de puzles de 6×6 a 9×9.
+/// Etapa de la campaña: una secuencia lineal de puzles de 6×6 a 10×10.
 class CampaignStage {
   const CampaignStage({
     required this.number,

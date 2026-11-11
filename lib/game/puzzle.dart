@@ -2,7 +2,7 @@ import 'rng.dart';
 
 enum Difficulty { easy, medium, hard, expert }
 
-const List<int> supportedSizes = [6, 7, 8, 9];
+const List<int> supportedSizes = [6, 7, 8, 9, 10];
 
 /// Un puzle de conejos: cuadrícula n×n dividida en n regiones conexas.
 /// La solución coloca un conejo por fila, columna y región, sin que dos conejos
